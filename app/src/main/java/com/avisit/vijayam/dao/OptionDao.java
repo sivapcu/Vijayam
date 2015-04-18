@@ -1,16 +1,15 @@
 package com.avisit.vijayam.dao;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
-import android.util.Log;
 
 import com.avisit.vijayam.model.Option;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class OptionDao extends DataBaseHelper{
     private static final String TAG = OptionDao.class.getSimpleName();

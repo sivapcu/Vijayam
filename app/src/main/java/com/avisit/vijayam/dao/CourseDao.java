@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
-import com.avisit.vijayam.activities.MyCoursesActivity;
 import com.avisit.vijayam.model.Course;
 
 import java.util.ArrayList;

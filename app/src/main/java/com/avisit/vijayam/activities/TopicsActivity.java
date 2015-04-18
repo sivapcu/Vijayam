@@ -1,6 +1,5 @@
 package com.avisit.vijayam.activities;
 
-import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -9,12 +8,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.avisit.vijayam.R;
-import com.avisit.vijayam.adapters.CourseListViewAdapter;
 import com.avisit.vijayam.adapters.TopicListViewAdapter;
-import com.avisit.vijayam.dao.CourseDao;
 import com.avisit.vijayam.dao.QuestionDao;
 import com.avisit.vijayam.dao.TopicDao;
 import com.avisit.vijayam.model.Topic;
@@ -43,27 +39,6 @@ public class TopicsActivity extends ActionBarActivity implements AdapterView.OnI
         listView.setOnItemClickListener(this);
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.menu_my_courses, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-      /*  int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }*/
-
-        return super.onOptionsItemSelected(item);
-    }
-
     /**
      * Callback method to be invoked when an item in this AdapterView has
      * been clicked.
@@ -86,8 +61,10 @@ public class TopicsActivity extends ActionBarActivity implements AdapterView.OnI
         application.setCurrentQuestionIndex(new QuestionDao(this).fetchLastSessionQuesId(topic.getTopicId()));
         Intent intent = new Intent(parent.getContext(), QuestionsActivity.class);
         parent.getContext().startActivity(intent);
+        finish();
     }
 
+    @Override
     public void onBackPressed() {
         super.onBackPressed();
         startActivity(new Intent(this, MyCoursesActivity.class));

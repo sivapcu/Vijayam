@@ -33,18 +33,9 @@ public class CourseListViewAdapter extends ArrayAdapter<Course> {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.courses_list_view, parent, false);
-
         Course course = courseList.get(position);
-        // TODO check how to download images from internet and use it in the list
-//        ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
-//        imageView.setImageResource(context.getResources().getIdentifier(course.getImageName(), "drawable", context.getPackageName()));
-
         TextView courseName = (TextView) rowView.findViewById(R.id.content);
         courseName.setText(course.getCourseName());
-
-        // TODO decide whether to have a description for course list
-        // TODO  also decide whether to show any notifications like new_topics_available or pending_topics etc
-
         return rowView;
     }
 }

@@ -3,12 +3,10 @@ package com.avisit.vijayam.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
 import com.avisit.vijayam.model.Question;
-import com.avisit.vijayam.util.VijayamApplication;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -37,27 +37,6 @@ public class MyCoursesActivity extends ActionBarActivity implements AdapterView.
         listView.setOnItemClickListener(this);
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.menu_my_courses, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-      /*  int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }*/
-
-        return super.onOptionsItemSelected(item);
-    }
-
     /**
      * Callback method to be invoked when an item in this AdapterView has
      * been clicked.
@@ -76,8 +55,10 @@ public class MyCoursesActivity extends ActionBarActivity implements AdapterView.
         ((VijayamApplication) getApplication()).setSelectedCourse(courseList.get(position));
         Intent intent = new Intent(parent.getContext(), TopicsActivity.class);
         startActivity(intent);
+        finish();
     }
 
+    @Override
     public void onBackPressed() {
         super.onBackPressed();
         startActivity(new Intent(this, MainActivity.class));

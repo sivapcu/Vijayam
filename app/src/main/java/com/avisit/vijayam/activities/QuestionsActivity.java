@@ -62,18 +62,27 @@ public class QuestionsActivity extends ActionBarActivity {
         }
     }
 
-    private void createReviewCheckBox() {
-        CheckBox checkBox = (CheckBox) findViewById(R.id.mark_for_review);
-        checkBox.setChecked(question.isMarkedForReview());
-        checkBox.setOnClickListener(new View.OnClickListener() {
+    private void fetchQuestion(int questionIndex) {
+        question = new QuestionDao(this).fetchQuestion(((VijayamApplication)getApplication()).getSelectedTopic().getTopicId(), questionIndex);
+        if(question!=null){
+            question.setOptionsList(new OptionDao(this).fetchOptions(question.getQuestionId()));
+            question.setImagesList(new QuestionDao(this).fetchImages(question.getQuestionId()));
+        }
+    }
 
-            @Override
-            public void onClick(View view) {
-                boolean isChecked = ((CheckBox) view).isChecked();
-                question.setMarkedForReview(isChecked);
-                new QuestionDao(getApplicationContext()).markQuestion(question.getQuestionId(), isChecked);
+    private void createImages() {
+        List<String> imagesList = this.question.getImagesList();
+        if(imagesList!=null){
+            for(int i = 0; i < imagesList.size(); i++) {
+                Button button = new Button(this);
+                button.setText("Image " + (i + 1));
+                button.setTextColor(getResources().getColor(R.color.button_material_light));
+                button.setId(i);
+                button.setBackgroundColor(getResources().getColor(R.color.button_material_dark));
+                button.setOnClickListener(btnListener);
+                ((LinearLayout)findViewById(R.id.images_layout)).addView(button);
             }
-        });
+        }
     }
 
     private void createOptions(boolean isSubmitted, int checkedOptionIndex) {
@@ -114,29 +123,21 @@ public class QuestionsActivity extends ActionBarActivity {
         }
     }
 
-    private void createImages() {
-        List<String> imagesList = this.question.getImagesList();
-        if(imagesList!=null){
-            for(int i = 0; i < imagesList.size(); i++) {
-                Button button = new Button(this);
-                button.setText("Image " + (i + 1));
-                button.setTextColor(getResources().getColor(R.color.button_material_light));
-                button.setId(i);
-                button.setBackgroundColor(getResources().getColor(R.color.button_material_dark));
-                button.setOnClickListener(btnListener);
-                ((LinearLayout)findViewById(R.id.images_layout)).addView(button);
+    private void createReviewCheckBox() {
+        CheckBox checkBox = (CheckBox) findViewById(R.id.mark_for_review);
+        checkBox.setChecked(question.isMarkedForReview());
+        checkBox.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                boolean isChecked = ((CheckBox) view).isChecked();
+                question.setMarkedForReview(isChecked);
+                new QuestionDao(getApplicationContext()).markQuestion(question.getQuestionId(), isChecked);
             }
-        }
+        });
     }
 
-    private void fetchQuestion(int questionIndex) {
-        question = new QuestionDao(this).fetchQuestion(((VijayamApplication)getApplication()).getSelectedTopic().getTopicId(), questionIndex);
-        if(question!=null){
-            question.setOptionsList(new OptionDao(this).fetchOptions(question.getQuestionId()));
-            question.setImagesList(new QuestionDao(this).fetchImages(question.getQuestionId()));
-        }
-    }
-
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.questions, menu);
@@ -157,6 +158,7 @@ public class QuestionsActivity extends ActionBarActivity {
         return true;
     }
 
+    @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.action_previous:
@@ -202,6 +204,28 @@ public class QuestionsActivity extends ActionBarActivity {
         }
     }
 
+    private void goToPrevQuestion() {
+        if(questionIndex!=0){
+            ((VijayamApplication) getApplication()).setCurrentQuestionIndex(--questionIndex);
+            Intent prevQuestion = new Intent(this, QuestionsActivity.class);
+            startActivity(prevQuestion);
+            finish();
+        }else{
+            Toast.makeText(this, "Swipe Right for Next Question!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void goToNextQuestion() {
+        if(questionIndex < ((VijayamApplication) getApplication()).getTotalQuestions()-1){
+            ((VijayamApplication) getApplication()).setCurrentQuestionIndex(++questionIndex);
+            Intent nextQuestion = new Intent(this, QuestionsActivity.class);
+            startActivity(nextQuestion);
+            finish();
+        }else{
+            Toast.makeText(QuestionsActivity.this, "Great! You have finished all Questions!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void showQuestionsListDialog() {
         AlertDialog.Builder allQuestionDialog = new AlertDialog.Builder(this);
         allQuestionDialog.setCancelable(true);
@@ -240,6 +264,7 @@ public class QuestionsActivity extends ActionBarActivity {
         };
     }
 
+    @Override
     public void onBackPressed() {
         super.onBackPressed();
         updateTopicQuestionMap();
@@ -247,59 +272,8 @@ public class QuestionsActivity extends ActionBarActivity {
         finish();
     }
 
-
-
     private void updateTopicQuestionMap() {
         new QuestionDao(this).updateTopicQuestionMap(((VijayamApplication) getApplication()).getSelectedTopic().getTopicId(), questionIndex);
-    }
-
-    private void goToPrevQuestion() {
-        if(questionIndex!=0){
-            ((VijayamApplication) getApplication()).setCurrentQuestionIndex(--questionIndex);
-            Intent prevQuestion = new Intent(this, QuestionsActivity.class);
-            startActivity(prevQuestion);
-            finish();
-        }else{
-            Toast.makeText(this, "Swipe Right for Next Question!", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void goToNextQuestion() {
-        if(questionIndex < ((VijayamApplication) getApplication()).getTotalQuestions()-1){
-            ((VijayamApplication) getApplication()).setCurrentQuestionIndex(++questionIndex);
-            Intent nextQuestion = new Intent(this, QuestionsActivity.class);
-            startActivity(nextQuestion);
-            finish();
-        }else{
-            Toast.makeText(QuestionsActivity.this, "Great! You have finished all Questions!", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    /**
-     * Override this method to stop animation between screen transitions
-     * Along this onResume() and onPause() has to be overridden
-     */
-    @Override
-    public void overridePendingTransition(int enterAnim, int exitAnim) {
-        super.overridePendingTransition(enterAnim, exitAnim);
-    }
-
-    /**
-     * see documentation of overridePendingTransition()
-     */
-    @Override
-    protected void onResume() {
-        super.onResume();
-        overridePendingTransition(0, 0);
-    }
-
-    /**
-     * see documentation of overridePendingTransition()
-     */
-    @Override
-    protected void onPause() {
-        super.onPause();
-        overridePendingTransition(0, 0);
     }
 
     private List<Question> getQuestionsMarked(int topicId) {

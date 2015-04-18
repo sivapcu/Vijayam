@@ -30,18 +30,9 @@ public class TopicListViewAdapter extends ArrayAdapter<Topic> {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.topics_list_view, parent, false);
-
         Topic topic = topicList.get(position);
-        // TODO check how to download images from internet and use it in the list
-//        ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
-//        imageView.setImageResource(context.getResources().getIdentifier(topic.getImageName(), "drawable", context.getPackageName()));
-
         TextView topicName = (TextView) rowView.findViewById(R.id.content);
         topicName.setText(topic.getTopicName());
-
-        // TODO decide whether to have a description for topic list
-        // TODO  also decide whether to show any notifications like new_topics_available or pending_topics etc
-
         return rowView;
     }
 }
