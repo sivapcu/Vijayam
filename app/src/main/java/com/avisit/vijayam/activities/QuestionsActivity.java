@@ -161,6 +161,9 @@ public class QuestionsActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
             case R.id.action_previous:
                 goToPrevQuestion();
                 return true;
@@ -279,4 +282,6 @@ public class QuestionsActivity extends ActionBarActivity {
     private List<Question> getQuestionsMarked(int topicId) {
         return new QuestionDao(this).fetchMarkedQuestions(topicId);
     }
+
+
 }

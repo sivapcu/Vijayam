@@ -64,4 +64,14 @@ public class MyCoursesActivity extends ActionBarActivity implements AdapterView.
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return(super.onOptionsItemSelected(item));
+    }
 }
