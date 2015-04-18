@@ -1,0 +1,74 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.avisit.vijayam.activities.QuestionsActivity">
+
+    <TextView
+        android:id="@+id/question_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
+        android:padding="5dp"
+        android:text="@string/question_no"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/googleBlue"
+        android:textIsSelectable="false" />
+
+    <ScrollView
+        android:id="@+id/question_scrollView"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/mark_for_review"
+        android:layout_below="@id/question_number">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/images_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+
+            <TextView
+                android:id="@+id/question_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp"
+                android:text="@string/question_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="@dimen/level20"
+                android:textColor="@color/primary_material_dark"
+                android:textIsSelectable="false" />
+
+            <LinearLayout
+                android:id="@+id/options_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <CheckBox
+        android:id="@id/mark_for_review"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:text="@string/mark_for_review"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+</RelativeLayout>

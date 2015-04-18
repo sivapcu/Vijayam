@@ -1,0 +1,18 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Vijayam</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_my_courses">My Courses</string>
+    <string name="title_activity_questions">QuestionsActivity</string>
+
+    <string name="questions">Questions</string>
+    <string name="question_no">Question No : <xliff:g id="question_number">%1$d</xliff:g> of <xliff:g id="total_questions">%2$d</xliff:g></string>
+    <string name="question_content"><![CDATA[No Questions Found]]></string>
+    <string name="mark_for_review">Mark for Review</string>
+    <string name="no_results">No Results Found</string>
+    <string name="questionImage">Image</string>
+    <string name="action_previous">Previous</string>
+    <string name="action_next">Next</string>
+    <string name="action_finish">Finish</string>
+    <string name="list">All Questions</string>
+    <string name="verify">Verify</string>
+</resources>
