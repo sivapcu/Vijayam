@@ -21,7 +21,6 @@ import com.avisit.vijayam.model.Dashboard;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class MainActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private List<Dashboard> dashboardList = new ArrayList<Dashboard>();
