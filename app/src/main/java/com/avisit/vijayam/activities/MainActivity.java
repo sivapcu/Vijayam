@@ -17,7 +17,6 @@ import com.avisit.vijayam.R;
 import com.avisit.vijayam.adapters.DashboardListViewAdapter;
 import com.avisit.vijayam.dao.DashboardDao;
 import com.avisit.vijayam.model.Dashboard;
-import com.avisit.vijayam.util.VijayamApplication;
 
 import java.util.ArrayList;
 import java.util.List;
