@@ -29,10 +29,10 @@ public class TopicsActivity extends ActionBarActivity implements AdapterView.OnI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topics);
-        //setTitle(((VijayamApplication)getApplication()).getSelectedCourse().getCourseName());
+        setTitle(((VijayamApplication)getApplication()).getSelectedCourse().getCourseName());
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
-//        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setLogo(R.mipmap.vijayam_ic_launcher);
         actionBar.setDisplayUseLogoEnabled(true);
         listView = (ListView) findViewById(R.id.coursesList);
@@ -62,42 +62,7 @@ public class TopicsActivity extends ActionBarActivity implements AdapterView.OnI
         application.setSelectedTopic(topic);
         application.setTotalQuestions(new QuestionDao(this).fetchTotalQuestionCount(topic.getTopicId()));
         application.setCurrentQuestionIndex(new QuestionDao(this).fetchLastSessionQuesId(topic.getTopicId()));
-        Intent intent = new Intent(parent.getContext(), QuestionsActivity.class);
-        parent.getContext().startActivity(intent);
-        TopicsActivity.this.finish();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        startActivity(new Intent(this, MyCoursesActivity.class));
-        finish();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
-        return(super.onOptionsItemSelected(item));
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        overridePendingTransition(0, 0);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        overridePendingTransition(0, 0);
-    }
-
-    @Override
-    public void overridePendingTransition(int enterAnim, int exitAnim) {
-        super.overridePendingTransition(enterAnim, exitAnim);
+        Intent intent = new Intent(this, QuestionsActivity.class);
+        this.startActivity(intent);
     }
 }

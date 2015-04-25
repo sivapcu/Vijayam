@@ -41,11 +41,11 @@ public class QuestionsActivity extends ActionBarActivity {
         setContentView(R.layout.activity_questions);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
-//        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setLogo(R.mipmap.vijayam_ic_launcher);
         actionBar.setDisplayUseLogoEnabled(true);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-        //setTitle(((VijayamApplication) getApplication()).getSelectedTopic().getTopicName());
+        setTitle(((VijayamApplication) getApplication()).getSelectedTopic().getTopicName());
         quesNoTextView = ((TextView) findViewById(R.id.question_number));
         questionIndex = ((VijayamApplication) getApplication()).getCurrentQuestionIndex();
         Bundle intentExtrasBundle = getIntent().getExtras();
@@ -277,7 +277,6 @@ public class QuestionsActivity extends ActionBarActivity {
     public void onBackPressed() {
         super.onBackPressed();
         updateTopicQuestionMap();
-        startActivity(new Intent(this, TopicsActivity.class));
         finish();
     }
 

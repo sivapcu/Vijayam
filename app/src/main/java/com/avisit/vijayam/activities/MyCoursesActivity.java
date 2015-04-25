@@ -29,7 +29,7 @@ public class MyCoursesActivity extends ActionBarActivity implements AdapterView.
         setContentView(R.layout.activity_my_courses);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
-//        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setLogo(R.mipmap.vijayam_ic_launcher);
         actionBar.setDisplayUseLogoEnabled(true);
         listView = (ListView) findViewById(R.id.coursesList);
@@ -57,23 +57,5 @@ public class MyCoursesActivity extends ActionBarActivity implements AdapterView.
         ((VijayamApplication) getApplication()).setSelectedCourse(courseList.get(position));
         Intent intent = new Intent(parent.getContext(), TopicsActivity.class);
         startActivity(intent);
-        MyCoursesActivity.this.finish();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        startActivity(new Intent(this, DashboardActivity.class));
-        finish();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
-        return(super.onOptionsItemSelected(item));
     }
 }

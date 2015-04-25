@@ -22,7 +22,7 @@ public class DashboardActivity extends ActionBarActivity {
         setContentView(R.layout.activity_dashboard);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
-//        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setLogo(R.mipmap.vijayam_ic_launcher);
         actionBar.setDisplayUseLogoEnabled(true);
 
@@ -37,24 +37,21 @@ public class DashboardActivity extends ActionBarActivity {
         RelativeLayout resume = (RelativeLayout)findViewById(R.id.resumeLastSession);
         resume.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
-                Toast toast = Toast.makeText(getApplicationContext(), "Yet to be implemented!", Toast.LENGTH_SHORT);
-                toast.show();
+                Toast.makeText(DashboardActivity.this, "Yet to be implemented!", Toast.LENGTH_SHORT).show();
             }
         });
 
         RelativeLayout search = (RelativeLayout)findViewById(R.id.search);
         search.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
-                Toast toast = Toast.makeText(getApplicationContext(), "Yet to be implemented!", Toast.LENGTH_SHORT);
-                toast.show();
+                Toast.makeText(DashboardActivity.this, "Yet to be implemented!", Toast.LENGTH_SHORT).show();
             }
         });
 
         RelativeLayout tests = (RelativeLayout)findViewById(R.id.tests);
         tests.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
-                Toast toast = Toast.makeText(getApplicationContext(), "Yet to be implemented!", Toast.LENGTH_SHORT);
-                toast.show();
+                Toast.makeText(DashboardActivity.this, "Yet to be implemented!", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -78,6 +75,7 @@ public class DashboardActivity extends ActionBarActivity {
         if (id == R.id.login) {
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(intent);
+            finish();
             return true;
         }
 
@@ -100,6 +98,6 @@ public class DashboardActivity extends ActionBarActivity {
             public void run() {
                 doubleBackToExitPressedOnce=false;
             }
-        }, 2000);
+        }, 1500);
     }
 }
