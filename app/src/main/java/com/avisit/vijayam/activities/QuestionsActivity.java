@@ -4,8 +4,9 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,8 +39,13 @@ public class QuestionsActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_questions);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(true);
+//        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setLogo(R.mipmap.vijayam_ic_launcher);
+        actionBar.setDisplayUseLogoEnabled(true);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-        setTitle(((VijayamApplication) getApplication()).getSelectedTopic().getTopicName());
+        //setTitle(((VijayamApplication) getApplication()).getSelectedTopic().getTopicName());
         quesNoTextView = ((TextView) findViewById(R.id.question_number));
         questionIndex = ((VijayamApplication) getApplication()).getCurrentQuestionIndex();
         Bundle intentExtrasBundle = getIntent().getExtras();
@@ -178,7 +184,7 @@ public class QuestionsActivity extends ActionBarActivity {
                     AlertDialog.Builder verifyAlert = new AlertDialog.Builder(this);
                     verifyAlert.setTitle("Show Answer...");
                     verifyAlert.setMessage("You haven't selected any option. Do you want to show the answer? ");
-                    verifyAlert.setIcon(R.mipmap.ic_launcher1);
+                    verifyAlert.setIcon(R.mipmap.vijayam_ic_launcher);
                     verifyAlert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             Intent intent = new Intent(QuestionsActivity.this, QuestionsActivity.class);
@@ -282,6 +288,4 @@ public class QuestionsActivity extends ActionBarActivity {
     private List<Question> getQuestionsMarked(int topicId) {
         return new QuestionDao(this).fetchMarkedQuestions(topicId);
     }
-
-
 }

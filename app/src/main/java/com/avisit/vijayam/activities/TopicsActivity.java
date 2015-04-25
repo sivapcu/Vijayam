@@ -2,6 +2,7 @@ package com.avisit.vijayam.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,10 +29,12 @@ public class TopicsActivity extends ActionBarActivity implements AdapterView.OnI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topics);
-        setTitle(((VijayamApplication)getApplication()).getSelectedCourse().getCourseName());
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.mipmap.ic_launcher1);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        //setTitle(((VijayamApplication)getApplication()).getSelectedCourse().getCourseName());
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(true);
+//        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setLogo(R.mipmap.vijayam_ic_launcher);
+        actionBar.setDisplayUseLogoEnabled(true);
         listView = (ListView) findViewById(R.id.coursesList);
         topicList = new TopicDao(this).fetchTopics(((VijayamApplication)getApplication()).getSelectedCourse().getCourseId());
         TopicListViewAdapter topicAdapter = new TopicListViewAdapter(this, topicList);
@@ -61,7 +64,7 @@ public class TopicsActivity extends ActionBarActivity implements AdapterView.OnI
         application.setCurrentQuestionIndex(new QuestionDao(this).fetchLastSessionQuesId(topic.getTopicId()));
         Intent intent = new Intent(parent.getContext(), QuestionsActivity.class);
         parent.getContext().startActivity(intent);
-        finish();
+        TopicsActivity.this.finish();
     }
 
     @Override
@@ -79,5 +82,22 @@ public class TopicsActivity extends ActionBarActivity implements AdapterView.OnI
                 return true;
         }
         return(super.onOptionsItemSelected(item));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(0, 0);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        overridePendingTransition(0, 0);
+    }
+
+    @Override
+    public void overridePendingTransition(int enterAnim, int exitAnim) {
+        super.overridePendingTransition(enterAnim, exitAnim);
     }
 }

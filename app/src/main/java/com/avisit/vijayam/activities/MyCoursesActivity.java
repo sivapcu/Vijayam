@@ -1,9 +1,9 @@
 package com.avisit.vijayam.activities;
 
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,9 +27,11 @@ public class MyCoursesActivity extends ActionBarActivity implements AdapterView.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_courses);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.mipmap.ic_launcher1);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(true);
+//        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setLogo(R.mipmap.vijayam_ic_launcher);
+        actionBar.setDisplayUseLogoEnabled(true);
         listView = (ListView) findViewById(R.id.coursesList);
         courseList = new CourseDao(this).fetchMyCourses();
         CourseListViewAdapter courseAdapter = new CourseListViewAdapter(this, courseList);
@@ -55,7 +57,7 @@ public class MyCoursesActivity extends ActionBarActivity implements AdapterView.
         ((VijayamApplication) getApplication()).setSelectedCourse(courseList.get(position));
         Intent intent = new Intent(parent.getContext(), TopicsActivity.class);
         startActivity(intent);
-        finish();
+        MyCoursesActivity.this.finish();
     }
 
     @Override
@@ -73,5 +75,22 @@ public class MyCoursesActivity extends ActionBarActivity implements AdapterView.
                 return true;
         }
         return(super.onOptionsItemSelected(item));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(0, 0);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        overridePendingTransition(0, 0);
+    }
+
+    @Override
+    public void overridePendingTransition(int enterAnim, int exitAnim) {
+        super.overridePendingTransition(enterAnim, exitAnim);
     }
 }

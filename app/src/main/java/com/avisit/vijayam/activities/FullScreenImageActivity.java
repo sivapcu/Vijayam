@@ -7,10 +7,8 @@ import android.webkit.WebView;
 
 import com.avisit.vijayam.R;
 
-public class FullScreenImageActivity extends ActionBarActivity
-{
-  protected void onCreate(Bundle paramBundle)
-  {
+public class FullScreenImageActivity extends ActionBarActivity {
+  protected void onCreate(Bundle paramBundle) {
     super.onCreate(paramBundle);
     setContentView(R.layout.activity_full_screen_image);
     String str = getIntent().getStringExtra("imageName");

@@ -2,14 +2,70 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.avisit.vijayam" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
         android:name=".util.VijayamApplication"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/vijayam_ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
             android:name=".activities.MainActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name=".activities.MyCoursesActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".activities.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity" />
+        </activity>
+        <activity
+            android:name=".activities.TopicsActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".activities.MyCoursesActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MyCoursesActivity" />
+        </activity>
+        <activity
+            android:name=".activities.QuestionsActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".activities.TopicsActivity"
+            android:uiOptions="splitActionBarWhenNarrow" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.TopicsActivity" />
+        </activity>
+        <activity
+            android:name=".activities.FullScreenImageActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".activities.QuestionsActivity"
+            android:uiOptions="splitActionBarWhenNarrow" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.QuestionsActivity" />
+        </activity>
+        <activity
+            android:name=".activities.LoginActivity"
+            android:label="@string/title_activity_login"
+            android:windowSoftInputMode="adjustResize|stateHidden" >
+        </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".activities.SplashActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,39 +74,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.MyCoursesActivity"
-            android:label="@string/title_activity_my_courses"
+            android:name=".activities.DashboardActivity"
+            android:label="@string/title_activity_dashboard"
             android:parentActivityName=".activities.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.MainActivity" />
-        </activity>
-
-        <activity
-            android:name=".activities.TopicsActivity"
-            android:parentActivityName=".activities.MyCoursesActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.MyCoursesActivity" />
-        </activity>
-
-        <activity
-            android:name=".activities.QuestionsActivity"
-            android:parentActivityName=".activities.TopicsActivity"
-            android:uiOptions="splitActionBarWhenNarrow">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.TopicsActivity" />
-        </activity>
-
-        <activity
-            android:name=".activities.FullScreenImageActivity"
-            android:label="@string/questionImage"
-            android:parentActivityName=".activities.QuestionsActivity"
-            android:uiOptions="splitActionBarWhenNarrow">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.QuestionsActivity" />
+                android:value="com.avisit.vijayam.activities.MainActivity" />
         </activity>
     </application>
 

@@ -9,4 +9,6 @@
     <dimen name="level16">16.0sp</dimen>
     <dimen name="level17">17.0sp</dimen>
     <dimen name="level20">20.0sp</dimen>
+    <dimen name="splash_screen_title">40sp</dimen>
+    <dimen name="splash_screen_caption">25sp</dimen>
 </resources>

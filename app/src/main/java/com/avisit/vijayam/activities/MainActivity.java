@@ -3,11 +3,9 @@ package com.avisit.vijayam.activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -29,11 +27,11 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "DEBUG TRIAL");
         setContentView(R.layout.activity_main);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.mipmap.ic_launcher1);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setLogo(R.mipmap.vijayam_ic_launcher);
+        actionBar.setDisplayUseLogoEnabled(true);
         listView = (ListView) findViewById(R.id.dashBoardList);
         dashboardList = new DashboardDao(this).fetchDashboardItems();
         DashboardListViewAdapter dashboardAdapter = new DashboardListViewAdapter(this, dashboardList);
@@ -46,7 +44,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Exit?");
         alertDialog.setMessage("Do you really want to exit the Application?");
-        alertDialog.setIcon(R.drawable.ic_launcher);
+        alertDialog.setIcon(R.mipmap.vijayam_ic_launcher);
         alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -69,7 +67,11 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         if(dashboardItemId == 2){
             intent = new Intent(parent.getContext(), MyCoursesActivity.class);
             parent.getContext().startActivity(intent);
-            finish();
+            MainActivity.this.finish();
+        } else if(dashboardItemId == 4){
+            intent = new Intent(parent.getContext(), LoginActivity.class);
+            parent.getContext().startActivity(intent);
+            MainActivity.this.finish();
         } else {
             Toast toast = Toast.makeText(getApplicationContext(), "Yet to be implemented!", Toast.LENGTH_SHORT);
             toast.show();

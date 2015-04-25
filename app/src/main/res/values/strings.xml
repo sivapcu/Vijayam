@@ -15,4 +15,9 @@
     <string name="action_finish">Finish</string>
     <string name="list">All Questions</string>
     <string name="verify">Verify</string>
+    <string name="title_activity_splash">SplashActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="splash_screen_caption">For the winners</string>
+    <string name="title_activity_dashboard">DashboardActivity</string>
 </resources>
