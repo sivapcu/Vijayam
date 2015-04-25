@@ -10,7 +10,7 @@ import com.avisit.vijayam.R;
 
 public class SplashActivity extends ActionBarActivity {
     // Constant Value for Splash Screen time visibility
-    private static int SPLASH_SCREEN_TIME = 1500;
+    private static int SPLASH_SCREEN_TIME = 500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +22,7 @@ public class SplashActivity extends ActionBarActivity {
         // Splash Screen visible for SPLASH_SCREEN_TIME
         new Handler().postDelayed(new Runnable() {
             public void run() {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
                 startActivity(intent);
                 finish();
             }

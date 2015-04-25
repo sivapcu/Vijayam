@@ -1,12 +1,315 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/googleBlue"
+    android:orientation="vertical"
     tools:context="com.avisit.vijayam.activities.DashboardActivity">
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:id="@+id/dashboard"
+        android:background="@color/white"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:baselineAligned="false">
 
-</RelativeLayout>
+        <FrameLayout
+            android:id="@+id/progressBar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="2">
+
+            <com.github.lzyzsd.circleprogress.DonutProgress
+                android:id="@+id/arc_progress"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                custom:donut_finished_stroke_width="20dp"
+                custom:donut_unfinished_stroke_width="15dp"
+                custom:donut_finished_color="@color/green"
+                custom:donut_progress="85"
+                custom:donut_suffix_text="%"
+                custom:donut_text_color="@color/green"
+                custom:donut_text_size="25sp"
+                custom:donut_unfinished_color="@color/googleBlue" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/progressNumbers"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="3"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/courseLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/courseTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Courses : "
+                    android:textSize="@dimen/abc_text_size_small_material"
+                    />
+
+                <TextView
+                    android:id="@+id/compCourseCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/abc_text_size_small_material"
+                    android:text="12"
+                    android:textColor="@color/green"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/abc_text_size_small_material"
+                    android:text="/"
+                    />
+                <TextView
+                    android:id="@+id/totalCourseCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/abc_text_size_small_material"
+                    android:text="999"
+                    android:textColor="@color/googleBlue"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/topicsLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/topicTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/abc_text_size_small_material"
+                    android:text="Topics : " />
+
+                <TextView
+                    android:id="@+id/compTopicCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/abc_text_size_small_material"
+                    android:text="123"
+                    android:textColor="@color/green"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/abc_text_size_small_material"
+                    android:text="/"
+                    />
+                <TextView
+                    android:id="@+id/totalTopicCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/abc_text_size_small_material"
+                    android:text="999"
+                    android:textColor="@color/googleBlue"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/quesLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/quesTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Questions : "
+                    android:textSize="@dimen/abc_text_size_small_material"
+                    />
+
+                <TextView
+                    android:id="@+id/compQuesCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/abc_text_size_small_material"
+                    android:text="1239"
+                    android:textColor="@color/green"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/abc_text_size_small_material"
+                    android:text="/"
+                    />
+                <TextView
+                    android:id="@+id/totalQuesCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/abc_text_size_small_material"
+                    android:text="9999"
+                    android:textColor="@color/googleBlue"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:id="@+id/actionBlock">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+
+            <RelativeLayout
+                android:id="@+id/resumeLastSession"
+                android:background="@drawable/layout_bg"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="right"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                >
+
+                <ImageView
+                    android:id="@+id/resumeImageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/resume"
+                    android:layout_centerInParent="true" />
+                <TextView
+                    android:layout_below="@id/resumeImageView"
+                    android:padding="10dp"
+                    android:textSize="@dimen/level17"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/resume"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="@color/white" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/browse"
+                android:background="@drawable/layout_bg"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="right"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                >
+
+                <ImageView
+                    android:id="@+id/browseImageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/books"
+                    android:layout_centerInParent="true" />
+                <TextView
+                    android:layout_below="@id/browseImageView"
+                    android:padding="10dp"
+                    android:textSize="@dimen/level17"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/browseCourses"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="@color/white"
+                    />
+
+                </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+
+            <RelativeLayout
+                android:id="@+id/search"
+                android:background="@drawable/layout_bg"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="right"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                >
+
+                <ImageView
+                    android:id="@+id/searchImageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/search"
+                    android:layout_centerInParent="true" />
+                <TextView
+                    android:layout_below="@id/searchImageView"
+                    android:padding="10dp"
+                    android:textSize="@dimen/level17"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/search"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="@color/white" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/tests"
+                android:background="@drawable/layout_bg"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="right"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                >
+
+                <ImageView
+                    android:id="@+id/testsImageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/exam"
+                    android:layout_centerInParent="true" />
+                <TextView
+                    android:layout_below="@id/testsImageView"
+                    android:padding="10dp"
+                    android:textSize="@dimen/level17"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/practiceTests"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="@color/white"
+                    />
+
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -20,4 +20,9 @@
     <string name="hello_world">Hello world!</string>
     <string name="splash_screen_caption">For the winners</string>
     <string name="title_activity_dashboard">DashboardActivity</string>
+    <string name="browseCourses">Browse Courses</string>
+    <string name="practiceTests">Mock Exams</string>
+    <string name="search">Search</string>
+    <string name="resume">Resume Last Session</string>
+    <string name="login">Login</string>
 </resources>

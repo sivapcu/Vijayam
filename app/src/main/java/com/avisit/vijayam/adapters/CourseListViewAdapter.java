@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.avisit.vijayam.R;
 import com.avisit.vijayam.model.Course;
-import com.avisit.vijayam.model.Dashboard;
 
 import org.w3c.dom.Text;
 

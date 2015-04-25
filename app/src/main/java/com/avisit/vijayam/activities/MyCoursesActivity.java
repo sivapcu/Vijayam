@@ -63,7 +63,7 @@ public class MyCoursesActivity extends ActionBarActivity implements AdapterView.
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startActivity(new Intent(this, MainActivity.class));
+        startActivity(new Intent(this, DashboardActivity.class));
         finish();
     }
 
@@ -75,22 +75,5 @@ public class MyCoursesActivity extends ActionBarActivity implements AdapterView.
                 return true;
         }
         return(super.onOptionsItemSelected(item));
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        overridePendingTransition(0, 0);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        overridePendingTransition(0, 0);
-    }
-
-    @Override
-    public void overridePendingTransition(int enterAnim, int exitAnim) {
-        super.overridePendingTransition(enterAnim, exitAnim);
     }
 }

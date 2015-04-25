@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="ash">#B1BCBE</color>
     <color name="red">#ff0000</color>
     <color name="green">#008F43</color>
     <color name="blue">#0000ff</color>
     <color name="black">#000000</color>
+    <color name="white">#ffffff</color>
     <color name="grey_options_background">#DED9DB</color>
     <color name="splash_background">#3b5998</color>
     <color name="googleBlue">#176dee</color>
     <color name="googleGreen">#009654</color>
+    <color name="googleGreenDark">#006839</color>
     <color name="bannerOrange">#ffbc4f</color>
     <color name="bannerBlue">#0087c2</color>
+    <color name="ColorPrimary">#99cc99</color>
+    <color name="ColorPrimaryDark">#009654</color>
 </resources>
