@@ -1,61 +1,78 @@
 package com.avisit.vijayam.activities;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.avisit.vijayam.R;
+import com.avisit.vijayam.util.Constants;
+import com.avisit.vijayam.util.VijayamApplication;
 
 public class DashboardActivity extends ActionBarActivity {
     boolean doubleBackToExitPressedOnce = false;
+    VijayamApplication app;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+        app = (VijayamApplication) getApplication();
+        customizeActionBar();
+        initDashboard();
+    }
+
+    private void customizeActionBar() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setLogo(R.mipmap.vijayam_ic_launcher);
         actionBar.setDisplayUseLogoEnabled(true);
-
-        RelativeLayout browse = (RelativeLayout)findViewById(R.id.browse);
-        browse.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MyCoursesActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        RelativeLayout resume = (RelativeLayout)findViewById(R.id.resumeLastSession);
-        resume.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v) {
-                Toast.makeText(DashboardActivity.this, "Yet to be implemented!", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        RelativeLayout search = (RelativeLayout)findViewById(R.id.search);
-        search.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v) {
-                Toast.makeText(DashboardActivity.this, "Yet to be implemented!", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        RelativeLayout tests = (RelativeLayout)findViewById(R.id.tests);
-        tests.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v) {
-                Toast.makeText(DashboardActivity.this, "Yet to be implemented!", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
+    private void initDashboard() {
+        String defaultValue = "0";
+        TextView compCourseCount = (TextView) findViewById(R.id.compCourseCount);
+        compCourseCount.setText(app.getAppParamValue(Constants.KEY_COURSE_COMPLETED, defaultValue));
+
+        TextView totalCourseCount = (TextView) findViewById(R.id.totalCourseCount);
+        totalCourseCount.setText(app.getAppParamValue(Constants.KEY_COURSE_COUNT, defaultValue));
+
+        TextView compTopicCount = (TextView) findViewById(R.id.compTopicCount);
+        compTopicCount.setText(app.getAppParamValue(Constants.KEY_TOPIC_COMPLETED, defaultValue));
+
+        TextView totalTopicCount = (TextView) findViewById(R.id.totalTopicCount);
+        totalTopicCount.setText(app.getAppParamValue(Constants.KEY_TOPIC_COUNT, defaultValue));
+
+        TextView compQuesCount = (TextView) findViewById(R.id.compQuesCount);
+        compQuesCount.setText(app.getAppParamValue(Constants.KEY_QUES_COMPLETED, defaultValue));
+
+        TextView totalQuesCount = (TextView) findViewById(R.id.totalQuesCount);
+        totalQuesCount.setText(app.getAppParamValue(Constants.KEY_QUES_COUNT, defaultValue));
+    }
+
+    public void browseCourses(View view){
+        Intent intent = new Intent(getApplicationContext(), MyCoursesActivity.class);
+        startActivity(intent);
+    }
+
+    public void resumeLastSession(View view){
+        Toast.makeText(DashboardActivity.this, "Resume Last Session!", Toast.LENGTH_SHORT).show();
+    }
+
+    public void search(View view){
+        Toast.makeText(DashboardActivity.this, "Search feature yet to be implemented!", Toast.LENGTH_SHORT).show();
+    }
+
+    public void mockExams(View view){
+        Toast.makeText(DashboardActivity.this, "Mock Exams!", Toast.LENGTH_SHORT).show();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

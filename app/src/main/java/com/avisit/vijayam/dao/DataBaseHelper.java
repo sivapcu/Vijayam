@@ -1,116 +1,40 @@
 package com.avisit.vijayam.dao;
 
 import android.content.Context;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import com.avisit.vijayam.util.VersionUtils;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
-    private String DB_LOCATION = null;
-    private static final String DB_NAME = "vijayamDb.sqlite";
-    private final Context myContext;
-    protected SQLiteDatabase myDataBase;
+    private static final String CREATE_TABLE_COURSE = "CREATE TABLE Course (_id INTEGER PRIMARY KEY NOT NULL, course_name TEXT, sort_order NUMERIC, image_name TEXT );";
+    //private static final String CREATE_TABLE_OPTION = "CREATE TABLE Option (_id INTEGER PRIMARY KEY NOT NULL, question_id NUMERIC, option_text TEXT, correct_flag TEXT, marked_flag TEXT);";
+    private static final String CREATE_TABLE_OPTION = "CREATE TABLE Option(option_id INTEGER NOT NULL, question_id NUMERIC, option_text TEXT, correct_flag TEXT, marked_flag TEXT, PRIMARY KEY(question_id, option_id));";
+    private static final String CREATE_TABLE_QUESTION = "CREATE TABLE Question (_id INTEGER PRIMARY KEY NOT NULL, topic_id NUMERIC, question_text TEXT, sort_order NUMERIC, review_flag TEXT, win_flag TEXT);";
+    private static final String CREATE_TABLE_QUESTION_IMAGE = "CREATE TABLE QuestionImage (_id INTEGER PRIMARY KEY NOT NULL, question_id NUMERIC, image_name TEXT);";
+    private static final String CREATE_TABLE_TOPIC = "CREATE TABLE Topic (_id INTEGER PRIMARY KEY NOT NULL, course_id NUMERIC, topic_name TEXT, sort_order NUMERIC);";
+    private static final String CREATE_TABLE_TOPIC_QUESTION = "CREATE TABLE TopicQuestionMap (_id INTEGER PRIMARY KEY NOT NULL, topic_id NUMERIC, question_id NUMERIC);";
+    private static final String CREATE_TABLE_APP_PARAM = "CREATE TABLE app_param (_id INTEGER PRIMARY KEY NOT NULL, key TEXT, value TEXT);";
+
+    private static final String insertIntoCourse = "INSERT INTO Course(_id, course_name, sort_order, image_name) VALUES";
+    private static final String insertIntoTopic = "INSERT INTO Topic(_id, course_id, topic_name, sort_order) VALUES";
+    private static final String insertIntoQuestion = "INSERT INTO Question(_id, topic_id, question_text, sort_order) VALUES";
+    private static final String insertIntoOption = "INSERT INTO Option(option_id, question_id, option_text, correct_flag) VALUES";
+
+    private static final String DB_NAME = "vijayam.db";
+
+    protected Context context;
 
     /**
      * Constructor
      * Takes and keeps a reference of the passed context in order to access to the application assets and resources.
-     * @param context
-     * @throws java.io.IOException
+     *
+     * @param context to use to open or create the database
      */
     public DataBaseHelper(Context context) {
-        super(context, DB_NAME, null, 1);
-        this.myContext = context;
-        DB_LOCATION = context.getFilesDir().getParentFile().getPath()+"/databases/";
-        if(!isDataBaseExist()) {
-            createDataBase();
-        }
-    }
-
-    /**
-     * Check if the database already exist to avoid re-copying the file each time you open the application.
-     * @return true if it exists, false if it doesn't
-     */
-    private boolean isDataBaseExist(){
-        SQLiteDatabase checkDB = null;
-        String DB_PATH = DB_LOCATION + DB_NAME;
-        try{
-            checkDB = SQLiteDatabase.openDatabase(DB_PATH, null, SQLiteDatabase.OPEN_READONLY);
-        }catch(SQLiteException e){
-            //database does't exist yet.
-        }
-        if(checkDB != null){
-            checkDB.close();
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Creates a empty database on the system and rewrites it with your own database.
-     */
-    public void createDataBase(){
-        // By calling this method an empty database will be created into the
-        // default system path of your application so we are gonna be able to
-        // overwrite that database with our database.
-        this.getReadableDatabase();
-        try {
-            copyDataBase();
-            openReadableDataBase();
-            close();
-        } catch (IOException e) {
-            throw new Error("Error copying database");
-        }
-    }
-
-    /**
-     * Copies your database from your local assets-folder to the just created empty database in the
-     * system folder, from where it can be accessed and handled.
-     * This is done by transfering bytestream.
-     * @throws java.io.IOException
-     */
-    private void copyDataBase() throws IOException{
-        InputStream myInput = null;
-        OutputStream myOutput = null;
-        try {
-            //Open your local db as the input stream
-            myInput = myContext.getAssets().open(DB_NAME);
-            // Path to the just created empty db
-            String outFileName = DB_LOCATION + DB_NAME;
-            //Open the empty db as the output stream
-            myOutput = new FileOutputStream(outFileName);
-            //transfer bytes from the inputfile to the outputfile
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = myInput.read(buffer))>0){
-                myOutput.write(buffer, 0, length);
-            }
-        } catch (IOException e) {
-            throw e;
-        }
-        //Close the streams
-        if(myOutput!=null){
-            myOutput.flush();
-            myOutput.close();
-        }
-        if(myInput!=null){
-            myInput.close();
-        }
-    }
-
-    public void openReadableDataBase() throws SQLException {
-        String DB_PATH = DB_LOCATION + DB_NAME;
-        myDataBase = SQLiteDatabase.openDatabase(DB_PATH, null, SQLiteDatabase.OPEN_READONLY);
-    }
-
-    public void openWritableDataBase() throws SQLException{
-        String DB_PATH = DB_LOCATION + DB_NAME;
-        myDataBase = SQLiteDatabase.openDatabase(DB_PATH, null, SQLiteDatabase.OPEN_READWRITE);
+        super(context, DB_NAME, null, VersionUtils.getVersionCode(context));
+        this.context = context;
     }
 
     /**
@@ -121,7 +45,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
-
+        createAllTables(db);
+        initializeAppParamTable(db);
+        //initializeData(db);
+        //version3to4(db);
     }
 
     /**
@@ -146,15 +73,48 @@ public class DataBaseHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.w(DataBaseHelper.class.getSimpleName(), "Upgrading database from version " + oldVersion + " to " + newVersion);
+        switch (oldVersion) {
+            case 1:
+                //version 1 to version 2 updates here
+                version1to2(db);
+                // we want both updates, so no break statement here...
+            case 2:
+                //version 2 to version 3 updates here
+                version2to3(db);
+        }
+    }
+
+    private void createAllTables(SQLiteDatabase db) {
+        db.execSQL(CREATE_TABLE_COURSE);
+        db.execSQL(CREATE_TABLE_OPTION);
+        db.execSQL(CREATE_TABLE_QUESTION);
+        db.execSQL(CREATE_TABLE_QUESTION_IMAGE);
+        db.execSQL(CREATE_TABLE_TOPIC);
+        db.execSQL(CREATE_TABLE_TOPIC_QUESTION);
+        db.execSQL(CREATE_TABLE_APP_PARAM);
+    }
+
+    private void initializeAppParamTable(SQLiteDatabase db) {
+        db.execSQL("INSERT INTO app_param VALUES(1, 'contentProviderId','vijayam');");
+        db.execSQL("INSERT INTO app_param VALUES(2, 'courseCount',0);");
+        db.execSQL("INSERT INTO app_param VALUES(3, 'courseCompleted',0);");
+        db.execSQL("INSERT INTO app_param VALUES(4, 'topicCount',0);");
+        db.execSQL("INSERT INTO app_param VALUES(5, 'topicCompleted',0);");
+        db.execSQL("INSERT INTO app_param VALUES(6, 'questionCount',0);");
+        db.execSQL("INSERT INTO app_param VALUES(7, 'questionCompleted',0);");
+    }
+
+    private void initializeData(SQLiteDatabase db) {
 
     }
 
-    @Override
-    public synchronized void close() {
-        super.close();
-        if (myDataBase != null) {
-            myDataBase.close();
-            myDataBase = null;
-        }
+    private void version1to2(SQLiteDatabase db) {
+        //no database updates
+    }
+
+    private void version2to3(SQLiteDatabase db) {
+        createAllTables(db);
+        initializeAppParamTable(db);
     }
 }

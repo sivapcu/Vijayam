@@ -1,7 +1,9 @@
 package com.avisit.vijayam.dao;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
@@ -15,22 +17,22 @@ import java.util.List;
  */
 public class TopicDao extends DataBaseHelper {
     private static final String TAG = TopicDao.class.getSimpleName();
-    public TopicDao(Context context) {
+    public TopicDao(Context context){
         super(context);
     }
 
 
     public List<Topic> fetchTopics(int courseId) {
-        openReadableDataBase();
+        SQLiteDatabase myDataBase = getReadableDatabase();
         List<Topic> topicList = new ArrayList<Topic>();
         Cursor cursor = null;
         try{
-            cursor = myDataBase.rawQuery("SELECT topic_id, topic_name FROM Topic WHERE course_id = ? ORDER BY sort_order", new String[]{Integer.toString(courseId)});
+            cursor = myDataBase.rawQuery("SELECT _id, topic_name FROM Topic WHERE course_id = ? ORDER BY sort_order", new String[]{Integer.toString(courseId)});
             if(cursor != null){
                 if(cursor.moveToFirst()){
                     do {
                         Topic topic = new Topic();
-                        topic.setTopicId(cursor.getInt(cursor.getColumnIndex("topic_id")));
+                        topic.setTopicId(cursor.getInt(cursor.getColumnIndex("_id")));
                         topic.setTopicName(cursor.getString(cursor.getColumnIndex("topic_name")));
                         topicList.add(topic);
                     }while (cursor.moveToNext());

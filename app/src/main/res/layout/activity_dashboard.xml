@@ -193,6 +193,7 @@
                 android:layout_weight="1"
                 android:clickable="true"
                 android:focusable="true"
+                android:onClick="resumeLastSession"
                 >
 
                 <ImageView
@@ -222,6 +223,7 @@
                 android:layout_weight="1"
                 android:clickable="true"
                 android:focusable="true"
+                android:onClick="browseCourses"
                 >
 
                 <ImageView
@@ -261,6 +263,7 @@
                 android:layout_weight="1"
                 android:clickable="true"
                 android:focusable="true"
+                android:onClick="search"
                 >
 
                 <ImageView
@@ -290,6 +293,7 @@
                 android:layout_weight="1"
                 android:clickable="true"
                 android:focusable="true"
+                android:onClick="mockExams"
                 >
 
                 <ImageView

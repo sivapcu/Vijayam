@@ -1,7 +1,9 @@
 package com.avisit.vijayam.dao;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
@@ -15,22 +17,22 @@ import java.util.List;
  */
 public class CourseDao extends DataBaseHelper {
     private static final String TAG = CourseDao.class.getSimpleName();
-    public CourseDao(Context context) {
+    public CourseDao(Context context){
         super(context);
     }
 
 
     public List<Course> fetchMyCourses() {
-        openReadableDataBase();
+        SQLiteDatabase myDataBase = getReadableDatabase();
         List<Course> courseList = new ArrayList<Course>();
         Cursor cursor = null;
         try{
-            cursor = myDataBase.rawQuery("SELECT course_name, course_id, image_name FROM Course ORDER BY sort_order",  null);
+            cursor = myDataBase.rawQuery("SELECT course_name, _id, image_name FROM Course ORDER BY sort_order",  null);
             if(cursor != null){
                 if(cursor.moveToFirst()){
                     do {
                         Course course = new Course();
-                        course.setCourseId(cursor.getInt(cursor.getColumnIndex("course_id")));
+                        course.setCourseId(cursor.getInt(cursor.getColumnIndex("_id")));
                         course.setCourseName(cursor.getString(cursor.getColumnIndex("course_name")));
                         course.setImageName(cursor.getString(cursor.getColumnIndex("image_name")));
                         courseList.add(course);

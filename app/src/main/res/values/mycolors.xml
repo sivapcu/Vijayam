@@ -9,6 +9,7 @@
     <color name="grey_options_background">#DED9DB</color>
     <color name="splash_background">#3b5998</color>
     <color name="googleBlue">#176dee</color>
+    <color name="googleBlueOnTouch">#4EACEE</color>
     <color name="googleGreen">#009654</color>
     <color name="googleGreenDark">#006839</color>
     <color name="bannerOrange">#ffbc4f</color>

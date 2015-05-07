@@ -3,9 +3,12 @@ package com.avisit.vijayam.util;
 import android.app.Application;
 import android.content.Context;
 
+import com.avisit.vijayam.dao.AppParamDao;
 import com.avisit.vijayam.model.Course;
 import com.avisit.vijayam.model.Question;
 import com.avisit.vijayam.model.Topic;
+
+import java.util.Map;
 
 /**
  * Created by User on 4/15/2015.
@@ -17,6 +20,7 @@ public class VijayamApplication extends Application {
     private Question selectedQuestion;
     private int currentQuestionIndex;
     private int totalQuestions;
+    private Map<String, String> appParamMap;
 
     public void resetAll() {
         this.currentQuestionIndex = 0;
@@ -39,6 +43,11 @@ public class VijayamApplication extends Application {
     public void onCreate() {
         super.onCreate();
         setContext(getApplicationContext());
+        loadAppParam();
+    }
+
+    private void loadAppParam() {
+        appParamMap = new AppParamDao(context).fetchAppParamMap();
     }
 
     public static void setContext(Context paramContext) {
@@ -83,5 +92,13 @@ public class VijayamApplication extends Application {
 
     public void setTotalQuestions(int totalQuestions) {
         this.totalQuestions = totalQuestions;
+    }
+
+    public String getAppParamValue(String key, String defaultValue){
+        String value = appParamMap.get(key);
+        if(value == null){
+            value = defaultValue;
+        }
+        return value;
     }
 }
