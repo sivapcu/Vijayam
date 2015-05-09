@@ -21,7 +21,6 @@ public class CourseDao extends DataBaseHelper {
         super(context);
     }
 
-
     public List<Course> fetchMyCourses() {
         SQLiteDatabase myDataBase = getReadableDatabase();
         List<Course> courseList = new ArrayList<Course>();

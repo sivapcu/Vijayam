@@ -1,5 +1,6 @@
 package com.avisit.vijayam.dao;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -19,12 +20,42 @@ public class AppParamDao extends DataBaseHelper {
         super(context);
     }
 
+    public long insert(String key, String value){
+        long rowId = 0;
+        ContentValues values = new ContentValues();
+        values.put("key", key);
+        values.put("value", value);
+        SQLiteDatabase myDataBase = getWritableDatabase();
+        try{
+            rowId = myDataBase.insert("AppParam", null, values);
+        } catch(SQLiteException se){
+            Log.e(TAG, "Could not persist the question");
+        } finally{
+            close();
+        }
+        return rowId;
+    }
+
+    public void update(String key, String value) {
+        SQLiteDatabase myDataBase = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("value", value);
+
+        if (myDataBase.update("AppParam", cv, "key = ?", new String[]{key}) == 0) {
+            ContentValues cv2 = new ContentValues();
+            cv2.put("key", key);
+            cv2.put("value", value);
+            myDataBase.insert("AppParam", null, cv2);
+        }
+        myDataBase.close();
+    }
+
     public Map<String, String> fetchAppParamMap() {
         Map<String, String> appParamMap = new HashMap<String, String>();
         SQLiteDatabase myDataBase = getReadableDatabase();
         Cursor cursor = null;
         try {
-            cursor = myDataBase.rawQuery("SELECT key, value FROM app_param", null);
+            cursor = myDataBase.rawQuery("SELECT key, value FROM AppParam", null);
             if (cursor != null ) {
                 if(cursor.moveToFirst()) {
                     do {
@@ -41,5 +72,43 @@ public class AppParamDao extends DataBaseHelper {
             close();
         }
         return appParamMap;
+    }
+
+    public String getAppParamValue(String key) {
+        String value = null;
+        SQLiteDatabase myDataBase = getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            cursor = myDataBase.rawQuery("SELECT value FROM AppParam WHERE key = ?", new String[]{key});
+            if (cursor != null ) {
+                if(cursor.moveToFirst()) {
+                    value = cursor.getString(cursor.getColumnIndex("value"));
+                }
+            }
+        } catch (SQLiteException se ) {
+            Log.e(TAG, "Could not open and query the database");
+        } finally {
+            if(cursor!=null){
+                cursor.close();
+            }
+            close();
+        }
+        return value;
+    }
+
+    public String getAppParamValue(String key, String defaultValue) {
+        String value = getAppParamValue(key);
+        if( value == null){
+            value = defaultValue;
+        }
+        return value;
+    }
+
+    public int getAppParamValue(String key, int defaultValue) {
+        String value = getAppParamValue(key);
+        if( value == null){
+            value = Integer.toString(defaultValue);
+        }
+        return Integer.valueOf(value);
     }
 }

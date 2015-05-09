@@ -12,18 +12,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.avisit.vijayam.R;
+import com.avisit.vijayam.dao.AppParamDao;
 import com.avisit.vijayam.util.Constants;
-import com.avisit.vijayam.util.VijayamApplication;
 
 public class DashboardActivity extends ActionBarActivity {
     boolean doubleBackToExitPressedOnce = false;
-    VijayamApplication app;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-        app = (VijayamApplication) getApplication();
         customizeActionBar();
         initDashboard();
     }
@@ -39,22 +37,22 @@ public class DashboardActivity extends ActionBarActivity {
     private void initDashboard() {
         String defaultValue = "0";
         TextView compCourseCount = (TextView) findViewById(R.id.compCourseCount);
-        compCourseCount.setText(app.getAppParamValue(Constants.KEY_COURSE_COMPLETED, defaultValue));
+        compCourseCount.setText(new AppParamDao(this).getAppParamValue(Constants.COURSE_COMPLETED, defaultValue));
 
         TextView totalCourseCount = (TextView) findViewById(R.id.totalCourseCount);
-        totalCourseCount.setText(app.getAppParamValue(Constants.KEY_COURSE_COUNT, defaultValue));
+        totalCourseCount.setText(new AppParamDao(this).getAppParamValue(Constants.COURSE_COUNT, defaultValue));
 
         TextView compTopicCount = (TextView) findViewById(R.id.compTopicCount);
-        compTopicCount.setText(app.getAppParamValue(Constants.KEY_TOPIC_COMPLETED, defaultValue));
+        compTopicCount.setText(new AppParamDao(this).getAppParamValue(Constants.TOPIC_COMPLETED, defaultValue));
 
         TextView totalTopicCount = (TextView) findViewById(R.id.totalTopicCount);
-        totalTopicCount.setText(app.getAppParamValue(Constants.KEY_TOPIC_COUNT, defaultValue));
+        totalTopicCount.setText(new AppParamDao(this).getAppParamValue(Constants.TOPIC_COUNT, defaultValue));
 
         TextView compQuesCount = (TextView) findViewById(R.id.compQuesCount);
-        compQuesCount.setText(app.getAppParamValue(Constants.KEY_QUES_COMPLETED, defaultValue));
+        compQuesCount.setText(new AppParamDao(this).getAppParamValue(Constants.QUESTION_COMPLETED, defaultValue));
 
         TextView totalQuesCount = (TextView) findViewById(R.id.totalQuesCount);
-        totalQuesCount.setText(app.getAppParamValue(Constants.KEY_QUES_COUNT, defaultValue));
+        totalQuesCount.setText(new AppParamDao(this).getAppParamValue(Constants.QUESTION_COUNT, defaultValue));
     }
 
     public void browseCourses(View view){

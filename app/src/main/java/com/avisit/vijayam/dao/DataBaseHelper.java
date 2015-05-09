@@ -3,24 +3,32 @@ package com.avisit.vijayam.dao;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.avisit.vijayam.util.VersionUtils;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_COURSE = "CREATE TABLE Course (_id INTEGER PRIMARY KEY NOT NULL, course_name TEXT, sort_order NUMERIC, image_name TEXT );";
-    //private static final String CREATE_TABLE_OPTION = "CREATE TABLE Option (_id INTEGER PRIMARY KEY NOT NULL, question_id NUMERIC, option_text TEXT, correct_flag TEXT, marked_flag TEXT);";
-    private static final String CREATE_TABLE_OPTION = "CREATE TABLE Option(option_id INTEGER NOT NULL, question_id NUMERIC, option_text TEXT, correct_flag TEXT, marked_flag TEXT, PRIMARY KEY(question_id, option_id));";
-    private static final String CREATE_TABLE_QUESTION = "CREATE TABLE Question (_id INTEGER PRIMARY KEY NOT NULL, topic_id NUMERIC, question_text TEXT, sort_order NUMERIC, review_flag TEXT, win_flag TEXT);";
-    private static final String CREATE_TABLE_QUESTION_IMAGE = "CREATE TABLE QuestionImage (_id INTEGER PRIMARY KEY NOT NULL, question_id NUMERIC, image_name TEXT);";
     private static final String CREATE_TABLE_TOPIC = "CREATE TABLE Topic (_id INTEGER PRIMARY KEY NOT NULL, course_id NUMERIC, topic_name TEXT, sort_order NUMERIC);";
-    private static final String CREATE_TABLE_TOPIC_QUESTION = "CREATE TABLE TopicQuestionMap (_id INTEGER PRIMARY KEY NOT NULL, topic_id NUMERIC, question_id NUMERIC);";
-    private static final String CREATE_TABLE_APP_PARAM = "CREATE TABLE app_param (_id INTEGER PRIMARY KEY NOT NULL, key TEXT, value TEXT);";
-
-    private static final String insertIntoCourse = "INSERT INTO Course(_id, course_name, sort_order, image_name) VALUES";
-    private static final String insertIntoTopic = "INSERT INTO Topic(_id, course_id, topic_name, sort_order) VALUES";
-    private static final String insertIntoQuestion = "INSERT INTO Question(_id, topic_id, question_text, sort_order) VALUES";
-    private static final String insertIntoOption = "INSERT INTO Option(option_id, question_id, option_text, correct_flag) VALUES";
+    private static final String CREATE_TABLE_QUESTION = "CREATE TABLE Question (_id INTEGER PRIMARY KEY NOT NULL, topic_id NUMERIC, question_text TEXT, sort_order NUMERIC, review_flag TEXT, win_flag TEXT);";
+    private static final String CREATE_TABLE_OPTION = "CREATE TABLE Option(option_id INTEGER NOT NULL, question_id NUMERIC, option_text TEXT, correct_flag TEXT, marked_flag TEXT, PRIMARY KEY(question_id, option_id));";
+    private static final String CREATE_TABLE_QUESTION_IMAGE = "CREATE TABLE QuestionImage (image_id INTEGER NOT NULL, question_id NUMERIC, image_name TEXT, PRIMARY KEY(question_id, image_id));";
+    private static final String CREATE_TABLE_AppParam = "CREATE TABLE AppParam (key TEXT PRIMARY KEY NOT NULL, value TEXT);";
 
     private static final String DB_NAME = "vijayam.db";
 
@@ -33,44 +41,54 @@ public class DataBaseHelper extends SQLiteOpenHelper {
      * @param context to use to open or create the database
      */
     public DataBaseHelper(Context context) {
-        super(context, DB_NAME, null, VersionUtils.getVersionCode(context));
+        super(context, DB_NAME, null, VersionUtils.getAppVersionCode(context));
         this.context = context;
     }
 
-    /**
-     * Called when the database is created for the first time. This is where the
-     * creation of tables and the initial population of the tables should happen.
-     *
-     * @param db The database.
-     */
     @Override
     public void onCreate(SQLiteDatabase db) {
         createAllTables(db);
         initializeAppParamTable(db);
-        //initializeData(db);
+        initializeData(db);
         //version3to4(db);
     }
 
-    /**
-     * Called when the database needs to be upgraded. The implementation
-     * should use this method to drop tables, add tables, or do anything else it
-     * needs to upgrade to the new schema version.
-     * <p/>
-     * <p>
-     * The SQLite ALTER TABLE documentation can be found
-     * <a href="http://sqlite.org/lang_altertable.html">here</a>. If you add new columns
-     * you can use ALTER TABLE to insert them into a live table. If you rename or remove columns
-     * you can use ALTER TABLE to rename the old table, then create the new table and then
-     * populate the new table with the contents of the old table.
-     * </p><p>
-     * This method executes within a transaction.  If an exception is thrown, all changes
-     * will automatically be rolled back.
-     * </p>
-     *
-     * @param db         The database.
-     * @param oldVersion The old database version.
-     * @param newVersion The new database version.
-     */
+    private void initializeData(SQLiteDatabase db) {
+        new AsyncTask<Void, Void, Void>(){
+            @Override
+            protected Void doInBackground(Void... params) {
+                try{
+                    HttpClient httpclient = new DefaultHttpClient();
+                    HttpResponse response = httpclient.execute(new HttpGet("http://192.168.43.243:8080/vijayam/rest/courses/all"));
+                    int statusCode = response.getStatusLine().getStatusCode();
+                    String content;
+                    String errorMsg;
+                    if (statusCode == 200) {
+                        HttpEntity httpEntity = response.getEntity();
+                        content = EntityUtils.toString(httpEntity);
+                        if(content!=null && !content.isEmpty()){
+                            JSONArray jsonArray = new JSONArray(content);
+                            for(int i = 0; i < jsonArray.length(); i++){
+                                Object obj = jsonArray.get(i);
+
+                            }
+                        }
+                    } else {
+                        errorMsg = EntityUtils.toString(response.getEntity());
+                    }
+                } catch (ClientProtocolException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                return null;
+            }
+        }.execute(null, null, null);
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w(DataBaseHelper.class.getSimpleName(), "Upgrading database from version " + oldVersion + " to " + newVersion);
@@ -86,27 +104,32 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     private void createAllTables(SQLiteDatabase db) {
+        dropTables(db);
         db.execSQL(CREATE_TABLE_COURSE);
         db.execSQL(CREATE_TABLE_OPTION);
         db.execSQL(CREATE_TABLE_QUESTION);
         db.execSQL(CREATE_TABLE_QUESTION_IMAGE);
         db.execSQL(CREATE_TABLE_TOPIC);
-        db.execSQL(CREATE_TABLE_TOPIC_QUESTION);
-        db.execSQL(CREATE_TABLE_APP_PARAM);
+        db.execSQL(CREATE_TABLE_AppParam);
+    }
+
+    private void dropTables(SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS Course");
+        db.execSQL("DROP TABLE IF EXISTS Topic");
+        db.execSQL("DROP TABLE IF EXISTS Question");
+        db.execSQL("DROP TABLE IF EXISTS Option");
+        db.execSQL("DROP TABLE IF EXISTS QuestionImage");
+        db.execSQL("DROP TABLE IF EXISTS AppParam");
     }
 
     private void initializeAppParamTable(SQLiteDatabase db) {
-        db.execSQL("INSERT INTO app_param VALUES(1, 'contentProviderId','vijayam');");
-        db.execSQL("INSERT INTO app_param VALUES(2, 'courseCount',0);");
-        db.execSQL("INSERT INTO app_param VALUES(3, 'courseCompleted',0);");
-        db.execSQL("INSERT INTO app_param VALUES(4, 'topicCount',0);");
-        db.execSQL("INSERT INTO app_param VALUES(5, 'topicCompleted',0);");
-        db.execSQL("INSERT INTO app_param VALUES(6, 'questionCount',0);");
-        db.execSQL("INSERT INTO app_param VALUES(7, 'questionCompleted',0);");
-    }
-
-    private void initializeData(SQLiteDatabase db) {
-
+        db.execSQL("INSERT INTO AppParam VALUES('contentProviderId','vijayam');");
+        db.execSQL("INSERT INTO AppParam VALUES('courseCount',0);");
+        db.execSQL("INSERT INTO AppParam VALUES('courseCompleted',0);");
+        db.execSQL("INSERT INTO AppParam VALUES('topicCount',0);");
+        db.execSQL("INSERT INTO AppParam VALUES('topicCompleted',0);");
+        db.execSQL("INSERT INTO AppParam VALUES('questionCount',0);");
+        db.execSQL("INSERT INTO AppParam VALUES('questionCompleted',0);");
     }
 
     private void version1to2(SQLiteDatabase db) {

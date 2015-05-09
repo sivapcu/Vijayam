@@ -9,13 +9,16 @@ import android.content.pm.PackageManager;
  */
 public class VersionUtils {
 
-    public static int getVersionCode(Context context) {
-        PackageInfo manager = null;
+    /**
+     * @return Application's version code from the {@code PackageManager}.
+     */
+    public static int getAppVersionCode(Context context) {
         try {
-            manager = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            return packageInfo.versionCode;
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            // should never happen
+            throw new RuntimeException("Could not get package name: " + e);
         }
-        return manager!=null ? manager.versionCode : 0;
     }
 }
