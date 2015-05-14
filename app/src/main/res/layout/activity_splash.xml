@@ -1,9 +1,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#fff"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".activities.SplashActivity">
 
     <ImageView
         android:id="@+id/imageView1"
@@ -22,12 +24,22 @@
 
     <TextView
         android:id="@+id/caption"
-        android:layout_below="@id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/splash_screen_caption"
         android:textSize="@dimen/splash_screen_caption"
         android:textColor="#aaa"/>
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar2"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="@dimen/level20"
+        android:layout_marginRight="@dimen/level20"
+        android:indeterminate="true"
+        />
 
 </LinearLayout>

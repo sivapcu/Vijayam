@@ -92,6 +92,10 @@ public class DashboardActivity extends ActionBarActivity {
             startActivity(intent);
             finish();
             return true;
+        } else if (id == R.id.register) {
+            Intent intent = new Intent(getApplicationContext(), SetupActivity.class);
+            startActivity(intent);
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

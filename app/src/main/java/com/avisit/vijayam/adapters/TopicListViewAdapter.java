@@ -32,7 +32,7 @@ public class TopicListViewAdapter extends ArrayAdapter<Topic> {
         View rowView = inflater.inflate(R.layout.topics_list_view, parent, false);
         Topic topic = topicList.get(position);
         TextView topicName = (TextView) rowView.findViewById(R.id.content);
-        topicName.setText(topic.getTopicName());
+        topicName.setText(topic.getName());
         return rowView;
     }
 }

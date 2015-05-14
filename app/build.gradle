@@ -25,6 +25,10 @@ android {
             signingConfig signingConfigs.config
         }
     }
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
 }
 
 dependencies {
@@ -32,4 +36,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.0.0'
     compile 'com.google.android.gms:play-services:6.1.71'
     compile 'com.github.lzyzsd:circleprogress:1.1.0@aar'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.3.2'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.3.2'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.3.2'
 }

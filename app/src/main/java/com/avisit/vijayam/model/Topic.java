@@ -1,38 +1,61 @@
 package com.avisit.vijayam.model;
 
-/**
- * Created by User on 4/16/2015.
- */
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Topic {
-    private int topicId;
-    private String topicName;
+    private int id;
+    private String name;
+    private String description;
+    private boolean enabledFlag;
+    private int sortOrder;
+    private int courseId;
 
-    public Topic(){
-
+    public int getId() {
+        return id;
     }
 
-    public Topic(int topicId, String topicName) {
-        this.topicName = topicName;
-        this.topicId = topicId;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public int getTopicId() {
-        return topicId;
+    public String getName() {
+        return name;
     }
 
-    public void setTopicId(int topicId) {
-        this.topicId = topicId;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getTopicName() {
-        return topicName;
+    public String getDescription() {
+        return description;
     }
 
-    public void setTopicName(String topicName) {
-        this.topicName = topicName;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String toString() {
-        return this.topicName;
+    public boolean isEnabledFlag() {
+        return enabledFlag;
+    }
+
+    public void setEnabledFlag(boolean enabledFlag) {
+        this.enabledFlag = enabledFlag;
+    }
+
+    public int getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
+    }
+
+    public int getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(int sortOrder) {
+        this.sortOrder = sortOrder;
     }
 }

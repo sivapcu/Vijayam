@@ -2,6 +2,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.avisit.vijayam.activities.DashboardActivity">
-    <item android:id="@+id/login" android:title="@string/login"
-        android:orderInCategory="100" app:showAsAction="never" />
+    <!--<item android:id="@+id/login" android:title="@string/login"
+        android:orderInCategory="100" app:showAsAction="never" />-->
+    <item android:id="@+id/register" android:title="@string/register"
+        android:orderInCategory="101" app:showAsAction="never" />
 </menu>

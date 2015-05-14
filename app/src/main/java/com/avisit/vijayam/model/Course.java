@@ -1,39 +1,35 @@
 package com.avisit.vijayam.model;
 
-/**
- * Created by User on 4/16/2015.
- */
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import java.util.List;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Course {
-    private int courseId;
-    private String courseName;
+    private int id;
+    private String name;
     private String description;
     private int imageId;
     private String imageName;
+    private boolean enabledFlag;
+    private String contentProviderId;
+    private int sortOrder;
+    private List<Topic> topicList;
 
-    public Course(){
-
+    public int getId() {
+        return id;
     }
 
-    public Course(int courseId, String courseName, String imageName) {
-        this.courseName = courseName;
-        this.courseId = courseId;
-        this.imageName = imageName;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public int getCourseId() {
-        return courseId;
+    public String getName() {
+        return name;
     }
 
-    public void setCourseId(int courseId) {
-        this.courseId = courseId;
-    }
-
-    public String getCourseName() {
-        return courseName;
-    }
-
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -60,7 +56,36 @@ public class Course {
         this.imageName = imageName;
     }
 
-    public String toString() {
-        return this.courseName;
+    public boolean isEnabledFlag() {
+        return enabledFlag;
     }
+
+    public void setEnabledFlag(boolean enabledFlag) {
+        this.enabledFlag = enabledFlag;
+    }
+
+    public String getContentProviderId() {
+        return contentProviderId;
+    }
+
+    public void setContentProviderId(String contentProviderId) {
+        this.contentProviderId = contentProviderId;
+    }
+
+    public int getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(int sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    public List<Topic> getTopicList() {
+        return topicList;
+    }
+
+    public void setTopicList(List<Topic> topicList) {
+        this.topicList = topicList;
+    }
+
 }

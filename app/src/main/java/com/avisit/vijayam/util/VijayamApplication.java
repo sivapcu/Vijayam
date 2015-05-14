@@ -1,7 +1,10 @@
 package com.avisit.vijayam.util;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.res.Resources;
 
+import com.avisit.vijayam.dao.DatabaseSetupManager;
 import com.avisit.vijayam.model.Course;
 import com.avisit.vijayam.model.Question;
 import com.avisit.vijayam.model.Topic;
@@ -11,18 +14,23 @@ import com.avisit.vijayam.model.Topic;
  * Created by User on 4/15/2015.
  */
 public class VijayamApplication extends Application {
-    private Course selectedCourse;
-    private Topic selectedTopic;
-    private Question selectedQuestion;
-    private int currentQuestionIndex;
-    private int totalQuestions;
+    private AppState appState;
+    private DatabaseSetupManager databaseSetupManager;
 
-    public void resetAll() {
-        this.currentQuestionIndex = 0;
-        this.selectedCourse = null;
-        this.selectedQuestion = null;
-        this.selectedTopic = null;
-        this.totalQuestions = 0;
+    public AppState getAppState() {
+        return appState;
+    }
+
+    public void setAppState(AppState appState) {
+        this.appState = appState;
+    }
+
+    public DatabaseSetupManager getDatabaseSetupManager() {
+        return databaseSetupManager;
+    }
+
+    public void setDatabaseSetupManager(DatabaseSetupManager databaseSetupManager) {
+        this.databaseSetupManager = databaseSetupManager;
     }
 
     /**
@@ -37,45 +45,8 @@ public class VijayamApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        this.databaseSetupManager = new DatabaseSetupManager(getApplicationContext(), Constants.DB_ASSET_FILE_NAME, 14000, Constants.DB_NAME);
+        this.appState = new AppState();
     }
 
-    public Course getSelectedCourse() {
-        return selectedCourse;
-    }
-
-    public void setSelectedCourse(Course selectedCourse) {
-        this.selectedCourse = selectedCourse;
-    }
-
-    public Topic getSelectedTopic() {
-        return selectedTopic;
-    }
-
-    public void setSelectedTopic(Topic selectedTopic) {
-        this.selectedTopic = selectedTopic;
-    }
-
-    public int getCurrentQuestionIndex() {
-        return currentQuestionIndex;
-    }
-
-    public void setCurrentQuestionIndex(int currentQuestionIndex) {
-        this.currentQuestionIndex = currentQuestionIndex;
-    }
-
-    public Question getSelectedQuestion() {
-        return selectedQuestion;
-    }
-
-    public void setSelectedQuestion(Question selectedQuestion) {
-        this.selectedQuestion = selectedQuestion;
-    }
-
-    public int getTotalQuestions() {
-        return totalQuestions;
-    }
-
-    public void setTotalQuestions(int totalQuestions) {
-        this.totalQuestions = totalQuestions;
-    }
 }

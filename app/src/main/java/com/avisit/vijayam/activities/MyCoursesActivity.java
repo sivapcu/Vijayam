@@ -1,10 +1,9 @@
 package com.avisit.vijayam.activities;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -27,16 +26,21 @@ public class MyCoursesActivity extends ActionBarActivity implements AdapterView.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_courses);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(false);
-        actionBar.setLogo(R.mipmap.vijayam_ic_launcher);
-        actionBar.setDisplayUseLogoEnabled(true);
+        customizeActionBar();
         listView = (ListView) findViewById(R.id.coursesList);
         courseList = new CourseDao(this).fetchMyCourses();
         CourseListViewAdapter courseAdapter = new CourseListViewAdapter(this, courseList);
         listView.setAdapter(courseAdapter);
         listView.setOnItemClickListener(this);
+    }
+
+    private void customizeActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setLogo(R.mipmap.vijayam_ic_launcher);
+        actionBar.setDisplayUseLogoEnabled(true);
+        actionBar.setTitle("Browse Courses");
     }
 
     /**
@@ -54,7 +58,7 @@ public class MyCoursesActivity extends ActionBarActivity implements AdapterView.
      */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        ((VijayamApplication) getApplication()).setSelectedCourse(courseList.get(position));
+        ((VijayamApplication) getApplication()).getAppState().setSelectedCourse(courseList.get(position));
         Intent intent = new Intent(parent.getContext(), TopicsActivity.class);
         startActivity(intent);
     }

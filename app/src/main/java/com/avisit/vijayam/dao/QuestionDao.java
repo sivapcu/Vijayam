@@ -2,7 +2,6 @@ package com.avisit.vijayam.dao;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -17,34 +16,24 @@ import java.util.List;
  * Created by User on 4/18/2015.
  */
 public class QuestionDao extends DataBaseHelper {
-    private Context context;
     private static final String TAG = QuestionDao.class.getSimpleName();
-    public static final String TBL_QUESTION = "Question";
-    public static final String CLMN_QUES_QUES_ID = "_id";
-    public static final String CLMN_TOPIC_ID = "topic_id";
-    public static final String CLMN_QUES_TEXT = "question_text";
-    public static final String CLMN_SORT_ORDER = "sort_order";
-    public static final String CLMN_MARKED_FLAG = "review_flag";
-    public static final String CLMN_WIN_FLAG = "win_flag";
-
 
     public QuestionDao(Context context){
         super(context);
-        this.context = context;
     }
 
     public long persistQuestion(Question question) {
         long rowId = 0;
         ContentValues values = new ContentValues();
-        values.put(CLMN_QUES_QUES_ID, question.getQuestionId());
-        values.put(CLMN_QUES_TEXT, question.getQuestionText());
-        values.put(CLMN_MARKED_FLAG, question.isMarkedForReview());
-        values.put(CLMN_TOPIC_ID, question.getTopicId());
-        values.put(CLMN_SORT_ORDER, question.getSortOrder());
-        values.put(CLMN_WIN_FLAG, question.isWinFlag());
+        values.put("id", question.getQuestionId());
+        values.put("content", question.getQuestionText());
+        values.put("reviewFlag", question.isMarkedForReview());
+        values.put("topicId", question.getTopicId());
+        values.put("sortOrder", question.getSortOrder());
+        values.put("winFlag", question.isWinFlag());
         SQLiteDatabase myDataBase = getWritableDatabase();
         try{
-            rowId = myDataBase.insert(TBL_QUESTION, null, values);
+            rowId = myDataBase.insert("question", null, values);
         } catch(SQLiteException se){
             Log.e(TAG, "Could not persist the question");
         } finally{
@@ -58,7 +47,7 @@ public class QuestionDao extends DataBaseHelper {
         SQLiteDatabase myDataBase = getReadableDatabase();
         Cursor cursor = null;
         try{
-            cursor = myDataBase.rawQuery("SELECT count(_id) as count FROM Question where topic_id = ?", new String[]{Integer.toString(topicId)});
+            cursor = myDataBase.rawQuery("SELECT count(id) as count FROM question where topicId = ?", new String[]{Integer.toString(topicId)});
             if (cursor != null ) {
                 if (cursor.moveToFirst()) {
                     count = cursor.getInt(cursor.getColumnIndex("count"));
@@ -80,10 +69,10 @@ public class QuestionDao extends DataBaseHelper {
         SQLiteDatabase myDataBase = getReadableDatabase();
         Cursor cursor = null;
         try {
-            cursor = myDataBase.rawQuery("SELECT question_id FROM TopicQuestionMap WHERE topic_id = ?", new String[]{Integer.toString(topicId)});
+            cursor = myDataBase.rawQuery("SELECT questionId FROM topic_current_question WHERE topicId = ?", new String[]{Integer.toString(topicId)});
             if (cursor != null ) {
                 if (cursor.moveToFirst()) {
-                    questionId = cursor.getInt(cursor.getColumnIndex("question_id"));
+                    questionId = cursor.getInt(cursor.getColumnIndex("id"));
                 }
             }
         } catch (SQLiteException se ) {
@@ -102,13 +91,13 @@ public class QuestionDao extends DataBaseHelper {
         Question question = null;
         Cursor cursor = null;
         try {
-            cursor = myDataBase.rawQuery("SELECT _id, question_text, review_flag FROM Question where topic_id = ? AND sort_order = ?", new String[] {Integer.toString(topicId), Integer.toString(index+1)});
+            cursor = myDataBase.rawQuery("SELECT id, content, reviewFlag FROM question where topicId = ? AND sortOrder = ?", new String[] {Integer.toString(topicId), Integer.toString(index+1)});
             if (cursor != null ) {
                 if(cursor.moveToFirst()) {
                     question = new Question();
-                    question.setQuestionId(cursor.getInt(cursor.getColumnIndex("_id")));
-                    question.setQuestionText(cursor.getString(cursor.getColumnIndex("question_text")));
-                    question.setMarkedForReview(cursor.getInt(cursor.getColumnIndex("review_flag")) == 1 ? true : false);
+                    question.setQuestionId(cursor.getInt(cursor.getColumnIndex("id")));
+                    question.setQuestionText(cursor.getString(cursor.getColumnIndex("content")));
+                    question.setMarkedForReview(cursor.getInt(cursor.getColumnIndex("reviewFlag")) == 1 ? true : false);
                 }
             }
         } catch (SQLiteException se ) {
@@ -125,7 +114,7 @@ public class QuestionDao extends DataBaseHelper {
     public List<Question> fetchMarkedQuestions(int topicId) {
         SQLiteDatabase myDataBase = getReadableDatabase();
         List<Question> questionList = new ArrayList<Question>();
-        String query = "select _id, review_flag from Question where topic_id = ? order by sort_order";
+        String query = "select id, reviewFlag from question where topicId = ? order by sortOrder";
         Cursor cursor = null;
         try {
             cursor = myDataBase.rawQuery(query, new String[] {Integer.toString(topicId)});
@@ -133,8 +122,8 @@ public class QuestionDao extends DataBaseHelper {
                 if(cursor.moveToFirst()) {
                     do {
                         Question question = new Question();
-                        question.setQuestionId(cursor.getInt(cursor.getColumnIndex("_id")));
-                        question.setMarkedForReview(cursor.getInt(cursor.getColumnIndex("review_flag")) == 1 ? true :false);
+                        question.setQuestionId(cursor.getInt(cursor.getColumnIndex("id")));
+                        question.setMarkedForReview(cursor.getInt(cursor.getColumnIndex("reviewFlag")) == 1 ? true :false);
                         questionList.add(question);
                     }while (cursor.moveToNext());
                 }
@@ -154,12 +143,12 @@ public class QuestionDao extends DataBaseHelper {
         SQLiteDatabase myDataBase = getReadableDatabase();
         List<String> imagesList = new ArrayList<String>();
         Cursor cursor = null;
-        String query = "select image_name FROM QuestionImage WHERE question_id = ?";
+        String query = "select imageName FROM question_image WHERE questionId = ?";
         try {
             cursor = myDataBase.rawQuery(query, new String[] {Integer.toString(questionId)});
             if ((cursor != null) && (cursor.moveToFirst())) {
                 do {
-                    imagesList.add(cursor.getString(cursor.getColumnIndex("image_name")));
+                    imagesList.add(cursor.getString(cursor.getColumnIndex("imageName")));
                 }while (cursor.moveToNext());
             }
         } catch (SQLiteException se) {
@@ -176,23 +165,28 @@ public class QuestionDao extends DataBaseHelper {
     public void markQuestion(int questionId, boolean markFlag){
         SQLiteDatabase myDataBase = getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(CLMN_MARKED_FLAG, markFlag ? 1 : 0);
-        myDataBase.update("Question", cv, CLMN_QUES_QUES_ID+" =?", new String[] {Integer.toString(questionId)});
+        cv.put("reviewFlag", markFlag ? 1 : 0);
+        myDataBase.update("question", cv, "id =?", new String[] {Integer.toString(questionId)});
         close();
     }
 
+    /**
+     * Saves the last viewed question in the topic to the database to enable continuing from where left
+     * @param topicId
+     * @param questionId
+     */
     public void updateTopicQuestionMap(int topicId, int questionId) {
         SQLiteDatabase myDataBase = getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put("question_id", Integer.valueOf(questionId));
+        cv.put("questionId", Integer.valueOf(questionId));
 
-        if (myDataBase.update("TopicQuestionMap", cv, "topic_id = ?", new String[]{Integer.toString(topicId)}) == 0) {
+        if (myDataBase.update("topic_current_question", cv, "topicId = ?", new String[]{Integer.toString(topicId)}) == 0) {
             ContentValues cv2 = new ContentValues();
-            cv2.put("question_id", Integer.valueOf(questionId));
-            cv2.put("topic_id", Integer.valueOf(topicId));
-            myDataBase.insert("TopicQuestionMap", null, cv2);
+            cv2.put("questionId", Integer.valueOf(questionId));
+            cv2.put("topicId", Integer.valueOf(topicId));
+            myDataBase.insert("topic_current_question", null, cv2);
         }
-        close();
+        myDataBase.close();
     }
 
 

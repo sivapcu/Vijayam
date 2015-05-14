@@ -1,7 +1,7 @@
 package com.avisit.vijayam.dao;
 
+import android.content.ContentValues;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -26,14 +26,14 @@ public class CourseDao extends DataBaseHelper {
         List<Course> courseList = new ArrayList<Course>();
         Cursor cursor = null;
         try{
-            cursor = myDataBase.rawQuery("SELECT course_name, _id, image_name FROM Course ORDER BY sort_order",  null);
+            cursor = myDataBase.rawQuery("SELECT id, name, imageName FROM course ORDER BY sortOrder",  null);
             if(cursor != null){
                 if(cursor.moveToFirst()){
                     do {
                         Course course = new Course();
-                        course.setCourseId(cursor.getInt(cursor.getColumnIndex("_id")));
-                        course.setCourseName(cursor.getString(cursor.getColumnIndex("course_name")));
-                        course.setImageName(cursor.getString(cursor.getColumnIndex("image_name")));
+                        course.setId(cursor.getInt(cursor.getColumnIndex("id")));
+                        course.setName(cursor.getString(cursor.getColumnIndex("name")));
+                        course.setImageName(cursor.getString(cursor.getColumnIndex("imageName")));
                         courseList.add(course);
                     }while (cursor.moveToNext());
                 }
@@ -47,5 +47,20 @@ public class CourseDao extends DataBaseHelper {
             close();
         }
         return courseList;
+    }
+
+    public long insert(Course course) {
+        SQLiteDatabase myDataBase = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("id", course.getId());
+        contentValues.put("name", course.getName());
+        contentValues.put("description", course.getDescription());
+        contentValues.put("imageName", course.getImageName());
+        contentValues.put("enabledFlag", course.isEnabledFlag());
+        contentValues.put("contentProviderId", course.getContentProviderId());
+        contentValues.put("sortOrder", course.getSortOrder());
+        long rowId = myDataBase.insert("course", null, contentValues);
+        myDataBase.close();
+        return rowId;
     }
 }

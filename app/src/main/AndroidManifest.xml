@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.avisit.vijayam"
     android:versionCode="2"
-    android:versionName="1.1">
+    android:versionName="1.1" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -15,7 +15,9 @@
     <permission
         android:name="com.avisit.vijayam.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
+
     <uses-permission android:name="com.avisit.vijayam.permission.C2D_MESSAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <!-- This app has permission to register and receive data message. -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
@@ -25,11 +27,11 @@
         android:allowBackup="true"
         android:icon="@mipmap/vijayam_ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".activities.MyCoursesActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".activities.DashboardActivity">
+            android:parentActivityName=".activities.DashboardActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.DashboardActivity" />
@@ -37,7 +39,7 @@
         <activity
             android:name=".activities.TopicsActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".activities.MyCoursesActivity">
+            android:parentActivityName=".activities.MyCoursesActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MyCoursesActivity" />
@@ -46,7 +48,7 @@
             android:name=".activities.QuestionsActivity"
             android:label="@string/app_name"
             android:parentActivityName=".activities.TopicsActivity"
-            android:uiOptions="splitActionBarWhenNarrow">
+            android:uiOptions="splitActionBarWhenNarrow" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.TopicsActivity" />
@@ -55,7 +57,7 @@
             android:name=".activities.FullScreenImageActivity"
             android:label="@string/app_name"
             android:parentActivityName=".activities.QuestionsActivity"
-            android:uiOptions="splitActionBarWhenNarrow">
+            android:uiOptions="splitActionBarWhenNarrow" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.QuestionsActivity" />
@@ -64,15 +66,14 @@
             android:name=".activities.LoginActivity"
             android:label="@string/title_activity_login"
             android:parentActivityName=".activities.DashboardActivity"
-            android:windowSoftInputMode="adjustResize|stateHidden">
+            android:windowSoftInputMode="adjustResize|stateHidden" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.DashboardActivity" />
         </activity>
-
         <activity
             android:name=".activities.SplashActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -80,7 +81,7 @@
         </activity>
         <activity
             android:name=".activities.DashboardActivity"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
 
         <!-- Required for applications which use Google Play Services. -->
         <meta-data
@@ -93,17 +94,25 @@
 
               The com.google.android.c2dm.permission.SEND permission is necessary
               so only GCM services can send data messages for the app.
-            -->
+        -->
         <receiver
             android:name=".service.GcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
+            android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
+
                 <!-- Receives the actual messages. -->
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
                 <category android:name="com.avisit.vijayam" />
             </intent-filter>
         </receiver>
 
         <service android:name=".service.GcmNotificationIntentService" />
+
+        <activity
+            android:name=".activities.SetupActivity"
+            android:label="@string/app_name">
+        </activity>
     </application>
+
 </manifest>

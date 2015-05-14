@@ -27,7 +27,7 @@ public class AppParamDao extends DataBaseHelper {
         values.put("value", value);
         SQLiteDatabase myDataBase = getWritableDatabase();
         try{
-            rowId = myDataBase.insert("AppParam", null, values);
+            rowId = myDataBase.insert("app_param", null, values);
         } catch(SQLiteException se){
             Log.e(TAG, "Could not persist the question");
         } finally{
@@ -41,11 +41,11 @@ public class AppParamDao extends DataBaseHelper {
         ContentValues cv = new ContentValues();
         cv.put("value", value);
 
-        if (myDataBase.update("AppParam", cv, "key = ?", new String[]{key}) == 0) {
+        if (myDataBase.update("app_param", cv, "key = ?", new String[]{key}) == 0) {
             ContentValues cv2 = new ContentValues();
             cv2.put("key", key);
             cv2.put("value", value);
-            myDataBase.insert("AppParam", null, cv2);
+            myDataBase.insert("app_param", null, cv2);
         }
         myDataBase.close();
     }
@@ -55,7 +55,7 @@ public class AppParamDao extends DataBaseHelper {
         SQLiteDatabase myDataBase = getReadableDatabase();
         Cursor cursor = null;
         try {
-            cursor = myDataBase.rawQuery("SELECT key, value FROM AppParam", null);
+            cursor = myDataBase.rawQuery("SELECT key, value FROM app_param", null);
             if (cursor != null ) {
                 if(cursor.moveToFirst()) {
                     do {
@@ -79,7 +79,7 @@ public class AppParamDao extends DataBaseHelper {
         SQLiteDatabase myDataBase = getReadableDatabase();
         Cursor cursor = null;
         try {
-            cursor = myDataBase.rawQuery("SELECT value FROM AppParam WHERE key = ?", new String[]{key});
+            cursor = myDataBase.rawQuery("SELECT value FROM app_param WHERE key = ?", new String[]{key});
             if (cursor != null ) {
                 if(cursor.moveToFirst()) {
                     value = cursor.getString(cursor.getColumnIndex("value"));

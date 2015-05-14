@@ -29,14 +29,14 @@ public class TopicsActivity extends ActionBarActivity implements AdapterView.OnI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topics);
-        setTitle(((VijayamApplication)getApplication()).getSelectedCourse().getCourseName());
+        setTitle(((VijayamApplication)getApplication()).getAppState().getSelectedCourse().getName());
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setLogo(R.mipmap.vijayam_ic_launcher);
         actionBar.setDisplayUseLogoEnabled(true);
         listView = (ListView) findViewById(R.id.coursesList);
-        topicList = new TopicDao(this).fetchTopics(((VijayamApplication)getApplication()).getSelectedCourse().getCourseId());
+        topicList = new TopicDao(this).fetchTopics(((VijayamApplication)getApplication()).getAppState().getSelectedCourse().getId());
         TopicListViewAdapter topicAdapter = new TopicListViewAdapter(this, topicList);
         listView.setAdapter(topicAdapter);
         listView.setOnItemClickListener(this);
@@ -59,9 +59,9 @@ public class TopicsActivity extends ActionBarActivity implements AdapterView.OnI
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         VijayamApplication application = (VijayamApplication) getApplication();
         Topic topic = topicList.get(position);
-        application.setSelectedTopic(topic);
-        application.setTotalQuestions(new QuestionDao(this).fetchTotalQuestionCount(topic.getTopicId()));
-        application.setCurrentQuestionIndex(new QuestionDao(this).fetchLastSessionQuesId(topic.getTopicId()));
+        application.getAppState().setSelectedTopic(topic);
+        application.getAppState().setTotalQuestions(new QuestionDao(this).fetchTotalQuestionCount(topic.getId()));
+        application.getAppState().setCurrentQuestionIndex(new QuestionDao(this).fetchLastSessionQuesId(topic.getId()));
         Intent intent = new Intent(this, QuestionsActivity.class);
         this.startActivity(intent);
     }

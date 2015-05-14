@@ -45,9 +45,9 @@ public class QuestionsActivity extends ActionBarActivity {
         actionBar.setLogo(R.mipmap.vijayam_ic_launcher);
         actionBar.setDisplayUseLogoEnabled(true);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-        setTitle(((VijayamApplication) getApplication()).getSelectedTopic().getTopicName());
+        setTitle(((VijayamApplication) getApplication()).getAppState().getSelectedTopic().getName());
         quesNoTextView = ((TextView) findViewById(R.id.question_number));
-        questionIndex = ((VijayamApplication) getApplication()).getCurrentQuestionIndex();
+        questionIndex = ((VijayamApplication) getApplication()).getAppState().getCurrentQuestionIndex();
         Bundle intentExtrasBundle = getIntent().getExtras();
         boolean isSubmitted = false;
         if (intentExtrasBundle != null) {
@@ -56,7 +56,7 @@ public class QuestionsActivity extends ActionBarActivity {
         }
         fetchQuestion(this.questionIndex);
         if (question!=null) {
-            quesNoTextView.setText(getString(R.string.question_no, questionIndex + 1, ((VijayamApplication) getApplication()).getTotalQuestions()));
+            quesNoTextView.setText(getString(R.string.question_no, questionIndex + 1, ((VijayamApplication) getApplication()).getAppState().getTotalQuestions()));
             quesContentTextView = ((TextView) findViewById(R.id.question_textview));
             quesContentTextView.setText(question.getQuestionText());
             createImages();
@@ -69,7 +69,7 @@ public class QuestionsActivity extends ActionBarActivity {
     }
 
     private void fetchQuestion(int questionIndex) {
-        question = new QuestionDao(this).fetchQuestion(((VijayamApplication)getApplication()).getSelectedTopic().getTopicId(), questionIndex);
+        question = new QuestionDao(this).fetchQuestion(((VijayamApplication)getApplication()).getAppState().getSelectedTopic().getId(), questionIndex);
         if(question!=null){
             question.setOptionsList(new OptionDao(this).fetchOptions(question.getQuestionId()));
             question.setImagesList(new QuestionDao(this).fetchImages(question.getQuestionId()));
@@ -149,7 +149,7 @@ public class QuestionsActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.questions, menu);
 
         MenuItem previous = menu.findItem(R.id.action_previous);
-        final int totalQuestions = ((VijayamApplication) getApplication()).getTotalQuestions();
+        final int totalQuestions = ((VijayamApplication) getApplication()).getAppState().getTotalQuestions();
         previous.setVisible(questionIndex > 0 && totalQuestions > 0);
 
         MenuItem next = menu.findItem(R.id.action_next);
@@ -215,7 +215,7 @@ public class QuestionsActivity extends ActionBarActivity {
 
     private void goToPrevQuestion() {
         if(questionIndex!=0){
-            ((VijayamApplication) getApplication()).setCurrentQuestionIndex(--questionIndex);
+            ((VijayamApplication) getApplication()).getAppState().setCurrentQuestionIndex(--questionIndex);
             Intent prevQuestion = new Intent(this, QuestionsActivity.class);
             startActivity(prevQuestion);
             finish();
@@ -225,8 +225,8 @@ public class QuestionsActivity extends ActionBarActivity {
     }
 
     private void goToNextQuestion() {
-        if(questionIndex < ((VijayamApplication) getApplication()).getTotalQuestions()-1){
-            ((VijayamApplication) getApplication()).setCurrentQuestionIndex(++questionIndex);
+        if(questionIndex < ((VijayamApplication) getApplication()).getAppState().getTotalQuestions()-1){
+            ((VijayamApplication) getApplication()).getAppState().setCurrentQuestionIndex(++questionIndex);
             Intent nextQuestion = new Intent(this, QuestionsActivity.class);
             startActivity(nextQuestion);
             finish();
@@ -238,7 +238,7 @@ public class QuestionsActivity extends ActionBarActivity {
     private void showQuestionsListDialog() {
         AlertDialog.Builder allQuestionDialog = new AlertDialog.Builder(this);
         allQuestionDialog.setCancelable(true);
-        List<Question> questions = getQuestionsMarked(((VijayamApplication)getApplication()).getSelectedTopic().getTopicId());
+        List<Question> questions = getQuestionsMarked(((VijayamApplication)getApplication()).getAppState().getSelectedTopic().getId());
         final String [] items = new String[questions.size()];
         for(int i=0; i< items.length; i++){
             if(questions.get(i).isMarkedForReview()){
@@ -251,7 +251,7 @@ public class QuestionsActivity extends ActionBarActivity {
         allQuestionDialog.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
-                ((VijayamApplication) getApplication()).setCurrentQuestionIndex(item);
+                ((VijayamApplication) getApplication()).getAppState().setCurrentQuestionIndex(item);
                 Intent randomQuestion = new Intent(QuestionsActivity.this, QuestionsActivity.class);
                 startActivity(randomQuestion);
                 finish();
@@ -281,7 +281,7 @@ public class QuestionsActivity extends ActionBarActivity {
     }
 
     private void updateTopicQuestionMap() {
-        new QuestionDao(this).updateTopicQuestionMap(((VijayamApplication) getApplication()).getSelectedTopic().getTopicId(), questionIndex);
+        new QuestionDao(this).updateTopicQuestionMap(((VijayamApplication) getApplication()).getAppState().getSelectedTopic().getId(), questionIndex);
     }
 
     private List<Question> getQuestionsMarked(int topicId) {

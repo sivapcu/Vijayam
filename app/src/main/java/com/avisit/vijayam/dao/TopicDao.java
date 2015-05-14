@@ -1,5 +1,6 @@
 package com.avisit.vijayam.dao;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -27,13 +28,13 @@ public class TopicDao extends DataBaseHelper {
         List<Topic> topicList = new ArrayList<Topic>();
         Cursor cursor = null;
         try{
-            cursor = myDataBase.rawQuery("SELECT _id, topic_name FROM Topic WHERE course_id = ? ORDER BY sort_order", new String[]{Integer.toString(courseId)});
+            cursor = myDataBase.rawQuery("SELECT id, name FROM topic WHERE courseId = ? ORDER BY sortOrder", new String[]{Integer.toString(courseId)});
             if(cursor != null){
                 if(cursor.moveToFirst()){
                     do {
                         Topic topic = new Topic();
-                        topic.setTopicId(cursor.getInt(cursor.getColumnIndex("_id")));
-                        topic.setTopicName(cursor.getString(cursor.getColumnIndex("topic_name")));
+                        topic.setId(cursor.getInt(cursor.getColumnIndex("id")));
+                        topic.setName(cursor.getString(cursor.getColumnIndex("name")));
                         topicList.add(topic);
                     }while (cursor.moveToNext());
                 }
@@ -50,4 +51,24 @@ public class TopicDao extends DataBaseHelper {
     }
 
 
+    public void insertTopicList(List<Topic> topicList) {
+        if(topicList!=null && !topicList.isEmpty()){
+            for(Topic topic : topicList){
+                insert(topic);
+            }
+        }
+    }
+
+    public long insert(Topic topic) {
+        SQLiteDatabase myDataBase = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("id", topic.getId());
+        contentValues.put("name", topic.getName());
+        contentValues.put("description", topic.getDescription());
+        contentValues.put("enabledFlag", topic.isEnabledFlag());
+        contentValues.put("sortOrder", topic.getSortOrder());
+        long rowId = myDataBase.insert("topic", null, contentValues);
+        myDataBase.close();
+        return rowId;
+    }
 }
