@@ -62,9 +62,10 @@ public class HttpServiceHandler {
                 HttpGet httpGet = new HttpGet(url);
                 httpResponse = httpClient.execute(httpGet);
             }
-
-            httpEntity = httpResponse.getEntity();
-            response = EntityUtils.toString(httpEntity);
+            if(httpResponse!=null){
+                httpEntity = httpResponse.getEntity();
+                response = EntityUtils.toString(httpEntity);
+            }
 
         } catch (UnsupportedEncodingException e) {
             throw e;
