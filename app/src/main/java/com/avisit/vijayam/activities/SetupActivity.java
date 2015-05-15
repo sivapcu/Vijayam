@@ -17,27 +17,19 @@ import android.widget.Toast;
 
 import com.avisit.vijayam.R;
 import com.avisit.vijayam.dao.AppParamDao;
-import com.avisit.vijayam.model.User;
+import com.avisit.vijayam.service.HttpServiceHandler;
 import com.avisit.vijayam.util.AndroidUtils;
 import com.avisit.vijayam.util.Constants;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.protocol.HTTP;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -228,48 +220,26 @@ public class SetupActivity extends ActionBarActivity {
      * messages to your app.
      */
     private void sendRegistrationIdToServer() throws Exception {
-        HttpClient httpclient = new DefaultHttpClient();
-        HttpPost registerUserRequest = new HttpPost("http://192.168.43.243:8080/vijayam/rest/user/register");
-        HttpConnectionParams.setConnectionTimeout(httpclient.getParams(), 5000);
-        HttpConnectionParams.setSoTimeout(httpclient.getParams(), 5000);
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("registrationId", registrationId));
+        params.add(new BasicNameValuePair("contentProviderId", instituteEditText.getText().toString()));
+        params.add(new BasicNameValuePair("email", emailEditText.getText().toString()));
+        params.add(new BasicNameValuePair("password", passEditText.getText().toString()));
 
-        User user = new User(registrationId);
-        user.setContentProviderId(instituteEditText.getText().toString());
-        user.setEmail(emailEditText.getText().toString());
-        user.setPassword(passEditText.getText().toString());
+        HttpServiceHandler httpServiceHandler = new HttpServiceHandler();
+        String response1 = httpServiceHandler.makeServiceCall("http://192.168.43.243:8080/vijayam/rest/user/register", HttpServiceHandler.POST, params);
+        if ("SUCCESS".equals(response1)) {
+            new AppParamDao(context).update(Constants.REGISTRATION_FLAG, "REGISTERED");
+            errorMsg = "Registration Successful";
+        } else {
+            new AppParamDao(context).update(Constants.REGISTRATION_FLAG, "FAILED");
+            errorMsg = response1;
+        }
 
-        try {
-            StringEntity entity = new StringEntity(user.toJson());
-            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-            registerUserRequest.setEntity(entity);
-            HttpResponse httpResponse = httpclient.execute(registerUserRequest);
-            if (httpResponse != null) {
-                InputStream in = httpResponse.getEntity().getContent();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
-                StringBuilder response = new StringBuilder();
-                String line;
-
-                while ((line = bufferedReader.readLine()) != null) {
-                    response.append(line);
-                }
-                if (response.toString().equals("SUCCESS")) {
-                    new AppParamDao(context).update(Constants.REGISTRATION_FLAG, "REGISTERED");
-                    errorMsg = "Registration Successful";
-                } else {
-                    new AppParamDao(context).update(Constants.REGISTRATION_FLAG, "FAILED");
-                    errorMsg = response.toString();
-                }
-                in.close();
-            }
-
-            if(errorMsg.equals("Registration Successful")){
-                HttpPost syncDataRequest = new HttpPost("http://192.168.43.243:8080/vijayam/rest/courses/contentProvider/"+user.getContentProviderId());
-                //todo write code sync data
-            }
-        } catch (ClientProtocolException e) {
-            throw e;
-        } catch (IOException e) {
-            throw e;
+        if(errorMsg.equals("Registration Successful")){
+            String response2 = httpServiceHandler.makeServiceCall("http://192.168.43.243:8080/vijayam/rest/courses/contentProvider/", HttpServiceHandler.POST, params);
+            Log.i(TAG, response2);
+            //todo parse and save the response to internal database
         }
     }
 
