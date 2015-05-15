@@ -31,8 +31,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.protocol.HTTP;
-import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -80,7 +80,7 @@ public class SetupActivity extends ActionBarActivity {
         actionBar.setDisplayUseLogoEnabled(true);
     }
 
-    public void showNoConnectionDialog(Context ctx) {
+    private void showNoConnectionDialog(Context ctx) {
         AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
         builder.setCancelable(true);
         builder.setMessage(R.string.no_connection);
@@ -94,13 +94,7 @@ public class SetupActivity extends ActionBarActivity {
 
         builder.setNegativeButton(R.string.cancel_button_text, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                return;
-            }
-        });
 
-        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            public void onCancel(DialogInterface dialog) {
-                return;
             }
         });
 
@@ -108,7 +102,7 @@ public class SetupActivity extends ActionBarActivity {
     }
 
     public void registerLater(View view) {
-        new AppParamDao(getApplicationContext()).update("IS_USER_REGISTERED", "LATER");
+        new AppParamDao(getApplicationContext()).update(Constants.REGISTRATION_FLAG, "LATER");
         Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
         startActivity(intent);
         finish();
@@ -144,49 +138,59 @@ public class SetupActivity extends ActionBarActivity {
     }
 
     private void registerWithServer() {
-        new AsyncTask<Void, Void, Void>() {
+        new AsyncTask<Void, String, Exception>() {
             ProgressDialog progressDialog = new ProgressDialog(SetupActivity.this);
 
             @Override
             protected void onPreExecute() {
-                progressDialog.setMessage("Verifying device registration for content updates");
+                progressDialog.setMessage("Registration for content updates");
                 progressDialog.show();
             }
 
             @Override
-            protected Void doInBackground(Void... params) {
+            protected Exception doInBackground(Void... params) {
                 GoogleCloudMessaging gcm = null;
+
                 try {
+                    publishProgress("Verifying presence of Google Play Services");
                     if(checkPlayServices()){
                         gcm = GoogleCloudMessaging.getInstance(context);
                     }
-                    registrationId = gcm.register(SENDER_ID);
-                    Log.i(TAG, "User registered, registration ID=" + registrationId);
-                    sendRegistrationIdToServer();
+                    if(gcm!=null){
+                        publishProgress("Generating Device Id for content update notifications");
+                        registrationId = gcm.register(SENDER_ID);
+                        Log.i(TAG, "User registered, registration ID=" + registrationId);
+                        publishProgress("Registering Device for content update notifications");
+                        sendRegistrationIdToServer();
+                    }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    return e;
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    return e;
                 }
                 return null;
             }
 
             @Override
-            protected void onPostExecute(Void aVoid) {
-                if(errorMsg.equals("Registration Successful")){
+            protected void onPostExecute(Exception exception) {
+                if ("Registration Successful".equals(errorMsg)) {
                     storeRegistrationId();
                 }
                 progressDialog.dismiss();
                 Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
                 startActivity(intent);
                 finish();
-                Toast.makeText(SetupActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
+                if(exception == null) {
+                    Toast.makeText(SetupActivity.this, errorMsg, Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(SetupActivity.this, exception.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
             }
 
             @Override
-            protected void onProgressUpdate(Void... values) {
-                super.onProgressUpdate(values);
-                //todo update user with whats happening in the background
+            protected void onProgressUpdate(String... values) {
+                progressDialog.setMessage(values[0]);
             }
         }.execute(null, null, null);
     }
@@ -226,6 +230,8 @@ public class SetupActivity extends ActionBarActivity {
     private void sendRegistrationIdToServer() throws Exception {
         HttpClient httpclient = new DefaultHttpClient();
         HttpPost registerUserRequest = new HttpPost("http://192.168.43.243:8080/vijayam/rest/user/register");
+        HttpConnectionParams.setConnectionTimeout(httpclient.getParams(), 5000);
+        HttpConnectionParams.setSoTimeout(httpclient.getParams(), 5000);
 
         User user = new User(registrationId);
         user.setContentProviderId(instituteEditText.getText().toString());
@@ -240,17 +246,17 @@ public class SetupActivity extends ActionBarActivity {
             if (httpResponse != null) {
                 InputStream in = httpResponse.getEntity().getContent();
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
-                StringBuffer response = new StringBuffer();
+                StringBuilder response = new StringBuilder();
                 String line;
 
                 while ((line = bufferedReader.readLine()) != null) {
                     response.append(line);
                 }
                 if (response.toString().equals("SUCCESS")) {
-                    new AppParamDao(context).update(Constants.REGISTRATION_FLAG, "1");
+                    new AppParamDao(context).update(Constants.REGISTRATION_FLAG, "REGISTERED");
                     errorMsg = "Registration Successful";
                 } else {
-                    new AppParamDao(context).update(Constants.REGISTRATION_FLAG, "0");
+                    new AppParamDao(context).update(Constants.REGISTRATION_FLAG, "FAILED");
                     errorMsg = response.toString();
                 }
                 in.close();
@@ -261,21 +267,19 @@ public class SetupActivity extends ActionBarActivity {
                 //todo write code sync data
             }
         } catch (ClientProtocolException e) {
-            e.printStackTrace();
+            throw e;
         } catch (IOException e) {
-            e.printStackTrace();
+            throw e;
         }
     }
 
     /**
      * Email validation
-     * @param email
-     * @return
+     * @param email input string
+     * @return true if input is a valid email pattern
      */
     private boolean isValidEmail(String email) {
-        String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-                + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-
+        String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         Pattern pattern = Pattern.compile(EMAIL_PATTERN);
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
@@ -283,14 +287,18 @@ public class SetupActivity extends ActionBarActivity {
 
     /**
      *
-     * @param pass
-     * @param minimumCharacters
-     * @return
+     * @param pass input string
+     * @param minimumCharacters minimum length required for the string
+     * @return true if valid, else return false
      */
     private boolean isValid(String pass, int minimumCharacters) {
-        if (pass != null && pass.length() > minimumCharacters) {
-            return true;
-        }
-        return false;
+        return pass != null && pass.length() >= minimumCharacters;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

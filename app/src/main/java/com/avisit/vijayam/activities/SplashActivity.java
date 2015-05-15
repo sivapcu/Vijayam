@@ -10,10 +10,10 @@ import android.widget.ProgressBar;
 import com.avisit.vijayam.R;
 import com.avisit.vijayam.dao.AppParamDao;
 import com.avisit.vijayam.dao.DatabaseSetupManager;
+import com.avisit.vijayam.util.Constants;
 import com.avisit.vijayam.util.VijayamApplication;
 
 public class SplashActivity extends ActionBarActivity implements DatabaseSetupManager.Listener {
-    private static final String TAG = SplashActivity.class.getSimpleName();
     Context context;
     private ProgressBar progressBar;
 
@@ -34,7 +34,7 @@ public class SplashActivity extends ActionBarActivity implements DatabaseSetupMa
     }
 
     private void startNextActivity() {
-        String userRegistrationStatus = getRegistrationStatus();
+        String userRegistrationStatus = new AppParamDao(context).getAppParamValue(Constants.REGISTRATION_FLAG, "");
         if(userRegistrationStatus.equals("REGISTERED") || userRegistrationStatus.equals("LATER")){
             Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
             startActivity(intent);
@@ -44,10 +44,6 @@ public class SplashActivity extends ActionBarActivity implements DatabaseSetupMa
             startActivity(intent);
             finish();
         }
-    }
-
-    private String getRegistrationStatus() {
-       return new AppParamDao(context).getAppParamValue("IS_USER_REGISTERED", "");
     }
 
     @Override

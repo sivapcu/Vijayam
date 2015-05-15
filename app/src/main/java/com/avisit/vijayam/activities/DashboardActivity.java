@@ -95,6 +95,7 @@ public class DashboardActivity extends ActionBarActivity {
         } else if (id == R.id.register) {
             Intent intent = new Intent(getApplicationContext(), SetupActivity.class);
             startActivity(intent);
+            finish();
             return true;
         }
 
