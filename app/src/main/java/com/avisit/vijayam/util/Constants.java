@@ -21,7 +21,6 @@ public class Constants {
     public static final String QUESTION_COUNT ="questionCount";
     public static final String QUESTION_COMPLETED ="questionCompleted";
 
-    public static final String URL_COURSES = "http://192.168.43.243:8080/vijayam/rest/courses/contentProvider";
     public static final String DB_ASSET_FILE_NAME = "vijayam_initial_db_setup.sqlite";
 
     public static final String DEVICE_REG_ID = "deviceRegId";
@@ -30,4 +29,11 @@ public class Constants {
     public static final String REGISTERED_VERSION = "registeredVersion";
     public static final String REGISTRATION_FLAG = "registeredWithServer";
 
+//    public static final String HOST_NAME = "10.0.2.2"; //emulator
+//    public static final String HOST_NAME = "192.168.1.4"; //WIFI
+    public static final String HOST_NAME = "192.168.43.243"; //mobile data
+    //public static final String HOST_NAME = "ec2-52-25-72-42.us-west-2.compute.amazonaws.com"; //production server
+
+    public static final String USER_REGISTER_URL = "http://"+HOST_NAME+":8080/vijayam/rest/user/register";
+    public static final String COURSES_BY_CONTENT_PROVIDER = "http://"+HOST_NAME+":8080/vijayam/rest/courses/contentProvider/";
 }
