@@ -17,9 +17,15 @@ import android.widget.Toast;
 
 import com.avisit.vijayam.R;
 import com.avisit.vijayam.dao.AppParamDao;
+import com.avisit.vijayam.dao.CourseDao;
+import com.avisit.vijayam.dao.TopicDao;
+import com.avisit.vijayam.model.Course;
+import com.avisit.vijayam.model.Topic;
 import com.avisit.vijayam.service.HttpServiceHandler;
 import com.avisit.vijayam.util.AndroidUtils;
 import com.avisit.vijayam.util.Constants;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -124,8 +130,9 @@ public class SetupActivity extends ActionBarActivity {
         if(validationFlag){
             if(!AndroidUtils.isNetworkAvailable(context)){
                 showNoConnectionDialog(this);
+            } else{
+                registerWithServer();
             }
-            registerWithServer();
         }
     }
 
@@ -161,6 +168,43 @@ public class SetupActivity extends ActionBarActivity {
                     return e;
                 }
                 return null;
+            }
+
+            /**
+             * Sends the registration ID to the server over HTTP, so it can use GCM/HTTP or CCS to send
+             * messages to your app.
+             */
+            private void sendRegistrationIdToServer() throws Exception {
+                List<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair("registrationId", registrationId));
+                params.add(new BasicNameValuePair("contentProviderId", instituteEditText.getText().toString()));
+                params.add(new BasicNameValuePair("email", emailEditText.getText().toString()));
+                params.add(new BasicNameValuePair("password", passEditText.getText().toString()));
+
+                HttpServiceHandler httpServiceHandler = new HttpServiceHandler();
+                String response1 = httpServiceHandler.makeServiceCall(Constants.USER_REGISTER_URL, HttpServiceHandler.POST, params);
+                if ("SUCCESS".equals(response1)) {
+                    new AppParamDao(context).update(Constants.REGISTRATION_FLAG, "REGISTERED");
+                    errorMsg = "Registration Successful";
+                    publishProgress("Successfully registered with the server");
+                } else {
+                    new AppParamDao(context).update(Constants.REGISTRATION_FLAG, "FAILED");
+                    errorMsg = response1;
+                }
+
+                if(errorMsg.equals("Registration Successful")){
+                    publishProgress("Fetching data from server");
+                    String response2 = httpServiceHandler.makeServiceCall(Constants.COURSES_BY_CONTENT_PROVIDER, HttpServiceHandler.POST, params);
+                    List<Course> courseList = new ObjectMapper().readValue(response2, new TypeReference<ArrayList<Course>>(){});
+                    publishProgress("Persisting data to the local database");
+                    for(Course course : courseList){
+                        if(new CourseDao(context).insertIfUpdateFails(course)){
+                            for(Topic topic : course.getTopicList()){
+                                new TopicDao(context).insertIfUpdateFails(topic);
+                            }
+                        }
+                    }
+                }
             }
 
             @Override
@@ -215,33 +259,7 @@ public class SetupActivity extends ActionBarActivity {
         new AppParamDao(context).update(Constants.REGISTERED_VERSION, Integer.toString(AndroidUtils.getAppVersionCode(context)));
     }
 
-    /**
-     * Sends the registration ID to the server over HTTP, so it can use GCM/HTTP or CCS to send
-     * messages to your app.
-     */
-    private void sendRegistrationIdToServer() throws Exception {
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair("registrationId", registrationId));
-        params.add(new BasicNameValuePair("contentProviderId", instituteEditText.getText().toString()));
-        params.add(new BasicNameValuePair("email", emailEditText.getText().toString()));
-        params.add(new BasicNameValuePair("password", passEditText.getText().toString()));
 
-        HttpServiceHandler httpServiceHandler = new HttpServiceHandler();
-        String response1 = httpServiceHandler.makeServiceCall("http://192.168.43.243:8080/vijayam/rest/user/register", HttpServiceHandler.POST, params);
-        if ("SUCCESS".equals(response1)) {
-            new AppParamDao(context).update(Constants.REGISTRATION_FLAG, "REGISTERED");
-            errorMsg = "Registration Successful";
-        } else {
-            new AppParamDao(context).update(Constants.REGISTRATION_FLAG, "FAILED");
-            errorMsg = response1;
-        }
-
-        if(errorMsg.equals("Registration Successful")){
-            String response2 = httpServiceHandler.makeServiceCall("http://192.168.43.243:8080/vijayam/rest/courses/contentProvider/", HttpServiceHandler.POST, params);
-            Log.i(TAG, response2);
-            //todo parse and save the response to internal database
-        }
-    }
 
     /**
      * Email validation

@@ -63,4 +63,25 @@ public class CourseDao extends DataBaseHelper {
         myDataBase.close();
         return rowId;
     }
+
+    public boolean insertIfUpdateFails(Course course) {
+        boolean successFlag = false;
+        SQLiteDatabase myDataBase = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("contentProviderId", course.getContentProviderId());
+        cv.put("name", course.getName());
+        cv.put("description", course.getDescription());
+        cv.put("imageName", course.getImageName());
+        cv.put("enabledFlag", course.isEnabledFlag() ? 1 : 0);
+        cv.put("sortOrder", course.getSortOrder());
+        int rowsUpdated = myDataBase.update("course", cv, "id = ?", new String[]{Integer.toString(course.getId())});
+        if (rowsUpdated != 0) {
+            successFlag = true;
+        } else {
+            cv.put("id", course.getId());
+            successFlag = myDataBase.insert("course", null, cv)!= -1;
+        }
+        myDataBase.close();
+        return successFlag;
+    }
 }
