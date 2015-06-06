@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
+import com.avisit.vijayam.model.Option;
 import com.avisit.vijayam.model.Question;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class QuestionDao extends DataBaseHelper {
         long rowId = 0;
         ContentValues values = new ContentValues();
         values.put("id", question.getQuestionId());
-        values.put("content", question.getQuestionText());
+        values.put("content", question.getContent());
         values.put("reviewFlag", question.isMarkedForReview());
         values.put("topicId", question.getTopicId());
         values.put("sortOrder", question.getSortOrder());
@@ -37,7 +38,7 @@ public class QuestionDao extends DataBaseHelper {
         } catch(SQLiteException se){
             Log.e(TAG, "Could not persist the question");
         } finally{
-            close();
+            myDataBase.close();
         }
         return rowId;
     }
@@ -59,7 +60,7 @@ public class QuestionDao extends DataBaseHelper {
             if(cursor!=null){
                 cursor.close();
             }
-            close();
+            myDataBase.close();
         }
         return count;
     }
@@ -72,7 +73,7 @@ public class QuestionDao extends DataBaseHelper {
             cursor = myDataBase.rawQuery("SELECT questionId FROM topic_current_question WHERE topicId = ?", new String[]{Integer.toString(topicId)});
             if (cursor != null ) {
                 if (cursor.moveToFirst()) {
-                    questionId = cursor.getInt(cursor.getColumnIndex("id"));
+                    questionId = cursor.getInt(cursor.getColumnIndex("questionId"));
                 }
             }
         } catch (SQLiteException se ) {
@@ -81,7 +82,7 @@ public class QuestionDao extends DataBaseHelper {
             if(cursor!=null){
                 cursor.close();
             }
-            close();
+            myDataBase.close();
         }
         return questionId;
     }
@@ -96,8 +97,8 @@ public class QuestionDao extends DataBaseHelper {
                 if(cursor.moveToFirst()) {
                     question = new Question();
                     question.setQuestionId(cursor.getInt(cursor.getColumnIndex("id")));
-                    question.setQuestionText(cursor.getString(cursor.getColumnIndex("content")));
-                    question.setMarkedForReview(cursor.getInt(cursor.getColumnIndex("reviewFlag")) == 1 ? true : false);
+                    question.setContent(cursor.getString(cursor.getColumnIndex("content")));
+                    question.setMarkedForReview(cursor.getInt(cursor.getColumnIndex("reviewFlag")) == 1);
                 }
             }
         } catch (SQLiteException se ) {
@@ -106,7 +107,7 @@ public class QuestionDao extends DataBaseHelper {
             if(cursor!=null){
                 cursor.close();
             }
-            close();
+            myDataBase.close();
         }
         return question;
     }
@@ -123,7 +124,7 @@ public class QuestionDao extends DataBaseHelper {
                     do {
                         Question question = new Question();
                         question.setQuestionId(cursor.getInt(cursor.getColumnIndex("id")));
-                        question.setMarkedForReview(cursor.getInt(cursor.getColumnIndex("reviewFlag")) == 1 ? true :false);
+                        question.setMarkedForReview(cursor.getInt(cursor.getColumnIndex("reviewFlag")) == 1);
                         questionList.add(question);
                     }while (cursor.moveToNext());
                 }
@@ -134,7 +135,7 @@ public class QuestionDao extends DataBaseHelper {
             if(cursor!=null){
                 cursor.close();
             }
-            close();
+            myDataBase.close();
         }
         return questionList;
     }
@@ -157,7 +158,7 @@ public class QuestionDao extends DataBaseHelper {
             if (cursor != null) {
                 cursor.close();
             }
-            close();
+            myDataBase.close();
         }
         return imagesList;
     }
@@ -172,22 +173,63 @@ public class QuestionDao extends DataBaseHelper {
 
     /**
      * Saves the last viewed question in the topic to the database to enable continuing from where left
-     * @param topicId
-     * @param questionId
+     * @param topicId topicId
+     * @param questionId questionId
      */
     public void updateTopicQuestionMap(int topicId, int questionId) {
         SQLiteDatabase myDataBase = getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("questionId", Integer.valueOf(questionId));
+        try{
+            ContentValues cv = new ContentValues();
+            cv.put("questionId", questionId);
 
-        if (myDataBase.update("topic_current_question", cv, "topicId = ?", new String[]{Integer.toString(topicId)}) == 0) {
-            ContentValues cv2 = new ContentValues();
-            cv2.put("questionId", Integer.valueOf(questionId));
-            cv2.put("topicId", Integer.valueOf(topicId));
-            myDataBase.insert("topic_current_question", null, cv2);
+            if (myDataBase.update("topic_current_question", cv, "topicId = ?", new String[]{Integer.toString(topicId)}) == 0) {
+                ContentValues cv2 = new ContentValues();
+                cv2.put("questionId", questionId);
+                cv2.put("topicId", topicId);
+                myDataBase.insert("topic_current_question", null, cv2);
+            }
+        } finally {
+            myDataBase.close();
         }
-        myDataBase.close();
     }
 
 
+    public boolean insertIfUpdateFails(Question question, int topicId) {
+        boolean successFlag = false;
+        SQLiteDatabase myDataBase = getWritableDatabase();
+        try{
+            ContentValues values = new ContentValues();
+            values.put("topicId", topicId);
+            values.put("content", question.getContent());
+            values.put("type", question.getType());
+            values.put("sortOrder", question.getSortOrder());
+            values.put("reviewFlag", question.isMarkedForReview());
+            values.put("winFlag", question.isWinFlag());
+            int rowsUpdated = myDataBase.update("question", values, "id = ?", new String[]{Integer.toString(question.getQuestionId())});
+            if (rowsUpdated != 0) {
+                successFlag = true;
+            } else {
+                values.put("id", question.getQuestionId());
+                successFlag = myDataBase.insert("question", null, values)!= -1;
+            }
+
+            if(successFlag){
+                for(Option option : question.getOptionsList()){
+                    values = new ContentValues();
+                    values.put("content", option.getContent());
+                    values.put("correct", option.isCorrect());
+                    if (myDataBase.update("option", values, "optionId = ? and questionId = ?", new String[]{Integer.toString(option.getOptionId(), option.getQuestionId())}) != 0) {
+                        successFlag = true;
+                    } else {
+                        values.put("optionId", option.getOptionId());
+                        values.put("questionId", option.getQuestionId());
+                        successFlag = myDataBase.insert("option", null, values)!= -1;
+                    }
+                }
+            }
+        } finally {
+            myDataBase.close();
+        }
+        return successFlag;
+    }
 }
