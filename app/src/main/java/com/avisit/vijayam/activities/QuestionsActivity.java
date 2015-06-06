@@ -58,7 +58,7 @@ public class QuestionsActivity extends ActionBarActivity {
         if (question!=null) {
             quesNoTextView.setText(getString(R.string.question_no, questionIndex + 1, ((VijayamApplication) getApplication()).getAppState().getTotalQuestions()));
             quesContentTextView = ((TextView) findViewById(R.id.question_textview));
-            quesContentTextView.setText(question.getQuestionText());
+            quesContentTextView.setText(question.getContent());
             createImages();
             createOptions(isSubmitted, checkedOptionIndex);
             createReviewCheckBox();
@@ -101,18 +101,18 @@ public class QuestionsActivity extends ActionBarActivity {
             for(int i=0; i<optionList.size(); i++){
                 Option option = optionList.get(i);
                 if (i == checkedOptionIndex) {
-                    option.setSelectedFlag(true);
+                    option.setSelected(true);
                 }
                 RadioButton radioButton = new RadioButton(this);
                 radioButton.setId(i);
-                radioButton.setText(option.getOptionText());
+                radioButton.setText(option.getContent());
                 radioButton.setCursorVisible(true);
                 radioButton.setTextSize(getResources().getDimension(R.dimen.level14));
 
                 if(isSubmitted){
-                    if(option.isCorrectFlag()){
+                    if(option.isCorrect()){
                         radioButton.setTextColor(getResources().getColorStateList(R.color.googleGreen));
-                    }else if(option.isSelectedFlag() && !option.isCorrectFlag()){
+                    }else if(option.isSelected() && !option.isCorrect()){
                         radioButton.setTextColor(getResources().getColorStateList(R.color.red));
                     }
                 }
