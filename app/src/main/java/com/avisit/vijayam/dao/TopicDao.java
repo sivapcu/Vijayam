@@ -45,7 +45,7 @@ public class TopicDao extends DataBaseHelper {
             if(cursor!=null){
                 cursor.close();
             }
-            close();
+            myDataBase.close();
         }
         return topicList;
     }
@@ -61,35 +61,42 @@ public class TopicDao extends DataBaseHelper {
 
     public long insert(Topic topic) {
         SQLiteDatabase myDataBase = getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("id", topic.getId());
-        contentValues.put("name", topic.getName());
-        contentValues.put("description", topic.getDescription());
-        contentValues.put("enabledFlag", topic.isEnabledFlag());
-        contentValues.put("sortOrder", topic.getSortOrder());
-        contentValues.put("courseId", topic.getCourseId());
-        long rowId = myDataBase.insert("topic", null, contentValues);
-        myDataBase.close();
+        long rowId;
+        try{
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("id", topic.getId());
+            contentValues.put("name", topic.getName());
+            contentValues.put("description", topic.getDescription());
+            contentValues.put("enabledFlag", topic.isEnabledFlag());
+            contentValues.put("sortOrder", topic.getSortOrder());
+            contentValues.put("courseId", topic.getCourseId());
+            rowId = myDataBase.insert("topic", null, contentValues);
+        } finally {
+            myDataBase.close();
+        }
         return rowId;
     }
 
     public boolean insertIfUpdateFails(Topic topic) {
         boolean successFlag = false;
         SQLiteDatabase myDataBase = getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("name", topic.getName());
-        cv.put("description", topic.getDescription());
-        cv.put("enabledFlag", topic.isEnabledFlag() ? 1 : 0);
-        cv.put("sortOrder", topic.getSortOrder());
-        cv.put("courseId", topic.getCourseId());
-        int rowsUpdated = myDataBase.update("topic", cv, "id = ?", new String[]{Integer.toString(topic.getId())});
-        if (rowsUpdated != 0) {
-            successFlag = true;
-        } else {
-            cv.put("id", topic.getId());
-            successFlag = myDataBase.insert("topic", null, cv)!= -1;
+        try{
+            ContentValues cv = new ContentValues();
+            cv.put("name", topic.getName());
+            cv.put("description", topic.getDescription());
+            cv.put("enabledFlag", topic.isEnabledFlag() ? 1 : 0);
+            cv.put("sortOrder", topic.getSortOrder());
+            cv.put("courseId", topic.getCourseId());
+            int rowsUpdated = myDataBase.update("topic", cv, "id = ?", new String[]{Integer.toString(topic.getId())});
+            if (rowsUpdated != 0) {
+                successFlag = true;
+            } else {
+                cv.put("id", topic.getId());
+                successFlag = myDataBase.insert("topic", null, cv)!= -1;
+            }
+        } finally {
+            myDataBase.close();
         }
-        myDataBase.close();
         return successFlag;
     }
 }
