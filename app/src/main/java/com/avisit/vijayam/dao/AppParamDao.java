@@ -31,7 +31,7 @@ public class AppParamDao extends DataBaseHelper {
         } catch(SQLiteException se){
             Log.e(TAG, "Could not persist the question");
         } finally{
-            close();
+            myDataBase.close();
         }
         return rowId;
     }
@@ -69,7 +69,7 @@ public class AppParamDao extends DataBaseHelper {
             if(cursor!=null){
                 cursor.close();
             }
-            close();
+            myDataBase.close();
         }
         return appParamMap;
     }
@@ -91,7 +91,7 @@ public class AppParamDao extends DataBaseHelper {
             if(cursor!=null){
                 cursor.close();
             }
-            close();
+            myDataBase.close();
         }
         return value;
     }
