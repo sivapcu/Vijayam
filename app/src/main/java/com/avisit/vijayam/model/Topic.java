@@ -2,6 +2,8 @@ package com.avisit.vijayam.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.List;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Topic {
     private int id;
@@ -10,6 +12,7 @@ public class Topic {
     private boolean enabledFlag;
     private int sortOrder;
     private int courseId;
+    private List<Question> questions;
 
     public int getId() {
         return id;
@@ -57,5 +60,13 @@ public class Topic {
 
     public void setSortOrder(int sortOrder) {
         this.sortOrder = sortOrder;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
     }
 }
