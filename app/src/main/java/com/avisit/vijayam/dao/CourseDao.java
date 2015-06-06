@@ -44,7 +44,7 @@ public class CourseDao extends DataBaseHelper {
             if(cursor!=null){
                 cursor.close();
             }
-            close();
+            myDataBase.close();
         }
         return courseList;
     }
