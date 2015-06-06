@@ -22,16 +22,16 @@ public class OptionDao extends DataBaseHelper{
 		ContentValues values = new ContentValues();
 		values.put("optionId", option.getOptionId());
 	    values.put("questionId", option.getQuestionId());
-	    values.put("content", option.getOptionText());
-	    values.put("correct", option.isCorrectFlag());
-	    values.put("markedFlag", option.isSelectedFlag());
+	    values.put("content", option.getContent());
+	    values.put("correct", option.isCorrect());
+	    values.put("markedFlag", option.isSelected());
         SQLiteDatabase myDataBase = getWritableDatabase();
 	    try{
 	    	myDataBase.insertOrThrow("option", null, values);
 	    } catch(SQLiteException se){
 	    	
 	    } finally{
-	    	close();	    	
+			myDataBase.close();
 	    }
 	}
 
@@ -40,16 +40,16 @@ public class OptionDao extends DataBaseHelper{
     	List<Option> optionList = new ArrayList<Option>();
     	Cursor cursor = null;
     	try {
-	    	cursor = myDataBase.rawQuery("SELECT id, questionId, content, correct, markedFlag FROM option WHERE questionId = ? order by id", new String[] {Integer.toString(questionId)});
+	    	cursor = myDataBase.rawQuery("SELECT optionId, questionId, content, correct, markedFlag FROM option WHERE questionId = ? order by optionId", new String[] {Integer.toString(questionId)});
 	    	if (cursor != null ) {
 	    		if(cursor.moveToFirst()) {
 	    			do {
 	    				Option option = new Option();
-	    				option.setOptionId(cursor.getInt(cursor.getColumnIndex("id")));
+	    				option.setOptionId(cursor.getInt(cursor.getColumnIndex("optionId")));
 	    				option.setQuestionId(cursor.getInt(cursor.getColumnIndex("questionId")));
-	    				option.setOptionText(cursor.getString(cursor.getColumnIndex("content")));
-	    				option.setCorrectFlag(cursor.getInt(cursor.getColumnIndex("correct")) == 1 ? true :false);
-	    				option.setSelectedFlag(cursor.getInt(cursor.getColumnIndex("markedFlag")) == 1 ? true :false);
+	    				option.setContent(cursor.getString(cursor.getColumnIndex("content")));
+	    				option.setCorrect(cursor.getInt(cursor.getColumnIndex("correct")) == 1);
+	    				option.setSelected(cursor.getInt(cursor.getColumnIndex("markedFlag")) == 1);
 	    				optionList.add(option);
 	    			} while (cursor.moveToNext());
 	    		}
@@ -60,22 +60,24 @@ public class OptionDao extends DataBaseHelper{
 	    	if(cursor!=null){
 	    		cursor.close();
 	    	}
-	    	close();
+			myDataBase.close();
 	    }
 		return optionList;
 	}
 
 	public void updateSelected(int questionId, int optionId) {
         SQLiteDatabase myDataBase = getWritableDatabase();
-		ContentValues cv1 = new ContentValues();
-		cv1.put("markedFlag", 1);
-		myDataBase.update("option", cv1, "questionId = ? AND optionId = ?", new String[]{Integer.toString(questionId), Integer.toString(optionId)});
+		try{
+			ContentValues cv1 = new ContentValues();
+			cv1.put("markedFlag", 1);
+			myDataBase.update("option", cv1, "questionId = ? AND optionId = ?", new String[]{Integer.toString(questionId), Integer.toString(optionId)});
 
-		ContentValues cv2 = new ContentValues();
-		cv2.put("markedFlag", 0);
-        myDataBase.update("option", cv2, "questionId = ? AND optionId != ?", new String[]{Integer.toString(questionId), Integer.toString(optionId)});
-
-        close();
+			ContentValues cv2 = new ContentValues();
+			cv2.put("markedFlag", 0);
+			myDataBase.update("option", cv2, "questionId = ? AND optionId != ?", new String[]{Integer.toString(questionId), Integer.toString(optionId)});
+		} finally {
+			myDataBase.close();
+		}
 	}
 
 	public int fetchScore(int examCode) {
