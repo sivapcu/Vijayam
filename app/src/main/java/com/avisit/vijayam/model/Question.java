@@ -1,10 +1,13 @@
 package com.avisit.vijayam.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Question {
 	private int questionId;
-	private String questionText;
+	private String content;
 	private int type;
 	private int points;
 	private int difficulty;
@@ -16,12 +19,12 @@ public class Question {
     private List<String> imagesList;
 
 
-	public String getQuestionText() {
-		return questionText;
+	public String getContent() {
+		return content;
 	}
 
-	public void setQuestionText(String questionText) {
-		this.questionText = questionText;
+	public void setContent(String content) {
+		this.content = content;
 	}
 
 	public int getType() {
