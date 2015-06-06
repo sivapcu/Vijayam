@@ -32,8 +32,9 @@ public class Constants {
 //    public static final String HOST_NAME = "10.0.2.2"; //emulator
 //    public static final String HOST_NAME = "192.168.1.4"; //WIFI
     public static final String HOST_NAME = "192.168.43.243"; //mobile data
-    //public static final String HOST_NAME = "ec2-52-25-72-42.us-west-2.compute.amazonaws.com"; //production server
+//    public static final String HOST_NAME = "ec2-52-25-72-42.us-west-2.compute.amazonaws.com"; //production server
 
     public static final String USER_REGISTER_URL = "http://"+HOST_NAME+":8080/vijayam/rest/user/register";
     public static final String COURSES_BY_CONTENT_PROVIDER = "http://"+HOST_NAME+":8080/vijayam/rest/courses/contentProvider/";
+    public static final String QUES_BY_TOPIC = "http://"+HOST_NAME+":8080/vijayam/rest/questions/byTopic/";
 }
