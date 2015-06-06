@@ -3,9 +3,9 @@ package com.avisit.vijayam.model;
 public class Option {
 	private int optionId;
 	private int questionId;
-	private String optionText;
-	private boolean selectedFlag;
-	private boolean correctFlag;
+	private String content;
+	private boolean selected;
+	private boolean correct;
 	
 	public int getOptionId() {
 		return optionId;
@@ -23,27 +23,27 @@ public class Option {
 		this.questionId = questionId;
 	}
 
-	public String getOptionText() {
-		return optionText;
+	public String getContent() {
+		return content;
 	}
 
-	public void setOptionText(String optionText) {
-		this.optionText = optionText;
+	public void setContent(String content) {
+		this.content = content;
 	}
 
-	public boolean isSelectedFlag() {
-		return selectedFlag;
+	public boolean isSelected() {
+		return selected;
 	}
 
-	public void setSelectedFlag(boolean selectedFlag) {
-		this.selectedFlag = selectedFlag;
+	public void setSelected(boolean selected) {
+		this.selected = selected;
 	}
 
-	public boolean isCorrectFlag() {
-		return correctFlag;
+	public boolean isCorrect() {
+		return correct;
 	}
 
-	public void setCorrectFlag(boolean correctFlag) {
-		this.correctFlag = correctFlag;
+	public void setCorrect(boolean correct) {
+		this.correct = correct;
 	}
 }
