@@ -65,6 +65,28 @@ public class QuestionDao extends DataBaseHelper {
         return count;
     }
 
+    public int fetchTotalQuestionCount(){
+        int count = 0;
+        SQLiteDatabase myDataBase = getReadableDatabase();
+        Cursor cursor = null;
+        try{
+            cursor = myDataBase.rawQuery("SELECT count(id) as count FROM question", new String[]{});
+            if (cursor != null ) {
+                if (cursor.moveToFirst()) {
+                    count = cursor.getInt(cursor.getColumnIndex("count"));
+                }
+            }
+        } catch (SQLiteException se ) {
+            Log.e(TAG, "Could not open and query the database");
+        } finally {
+            if(cursor!=null){
+                cursor.close();
+            }
+            myDataBase.close();
+        }
+        return count;
+    }
+
     public int fetchLastSessionQuesId(int topicId) {
         int questionId = 0;
         SQLiteDatabase myDataBase = getReadableDatabase();
