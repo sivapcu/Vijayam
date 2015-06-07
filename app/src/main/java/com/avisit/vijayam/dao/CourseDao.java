@@ -84,4 +84,26 @@ public class CourseDao extends DataBaseHelper {
         myDataBase.close();
         return successFlag;
     }
+
+    public int fetchTotalCourseCount(){
+        int count = 0;
+        SQLiteDatabase myDataBase = getReadableDatabase();
+        Cursor cursor = null;
+        try{
+            cursor = myDataBase.rawQuery("SELECT count(id) as count FROM course", new String[]{});
+            if (cursor != null ) {
+                if (cursor.moveToFirst()) {
+                    count = cursor.getInt(cursor.getColumnIndex("count"));
+                }
+            }
+        } catch (SQLiteException se ) {
+            Log.e(TAG, "Could not open and query the database");
+        } finally {
+            if(cursor!=null){
+                cursor.close();
+            }
+            myDataBase.close();
+        }
+        return count;
+    }
 }
