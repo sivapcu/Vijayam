@@ -13,6 +13,9 @@ import android.widget.Toast;
 
 import com.avisit.vijayam.R;
 import com.avisit.vijayam.dao.AppParamDao;
+import com.avisit.vijayam.dao.CourseDao;
+import com.avisit.vijayam.dao.QuestionDao;
+import com.avisit.vijayam.dao.TopicDao;
 import com.avisit.vijayam.util.Constants;
 
 public class DashboardActivity extends ActionBarActivity {
@@ -40,19 +43,19 @@ public class DashboardActivity extends ActionBarActivity {
         compCourseCount.setText(new AppParamDao(this).getAppParamValue(Constants.COURSE_COMPLETED, defaultValue));
 
         TextView totalCourseCount = (TextView) findViewById(R.id.totalCourseCount);
-        totalCourseCount.setText(new AppParamDao(this).getAppParamValue(Constants.COURSE_COUNT, defaultValue));
+        totalCourseCount.setText(Integer.toString(new CourseDao(this).fetchTotalCourseCount()));
 
         TextView compTopicCount = (TextView) findViewById(R.id.compTopicCount);
         compTopicCount.setText(new AppParamDao(this).getAppParamValue(Constants.TOPIC_COMPLETED, defaultValue));
 
         TextView totalTopicCount = (TextView) findViewById(R.id.totalTopicCount);
-        totalTopicCount.setText(new AppParamDao(this).getAppParamValue(Constants.TOPIC_COUNT, defaultValue));
+        totalTopicCount.setText(Integer.toString(new TopicDao(this).fetchTotalTopicCount()));
 
         TextView compQuesCount = (TextView) findViewById(R.id.compQuesCount);
         compQuesCount.setText(new AppParamDao(this).getAppParamValue(Constants.QUESTION_COMPLETED, defaultValue));
 
         TextView totalQuesCount = (TextView) findViewById(R.id.totalQuesCount);
-        totalQuesCount.setText(new AppParamDao(this).getAppParamValue(Constants.QUESTION_COUNT, defaultValue));
+        totalQuesCount.setText(Integer.toString(new QuestionDao(this).fetchTotalQuestionCount()));
     }
 
     public void browseCourses(View view){
