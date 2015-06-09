@@ -7,10 +7,12 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.avisit.vijayam.R;
 import com.avisit.vijayam.adapters.CourseListViewAdapter;
 import com.avisit.vijayam.dao.CourseDao;
+import com.avisit.vijayam.dao.TopicDao;
 import com.avisit.vijayam.model.Course;
 import com.avisit.vijayam.util.VijayamApplication;
 
@@ -28,6 +30,7 @@ public class MyCoursesActivity extends ActionBarActivity implements AdapterView.
         setContentView(R.layout.activity_my_courses);
         customizeActionBar();
         listView = (ListView) findViewById(R.id.coursesList);
+
         courseList = new CourseDao(this).fetchMyCourses();
         CourseListViewAdapter courseAdapter = new CourseListViewAdapter(this, courseList);
         listView.setAdapter(courseAdapter);
@@ -58,8 +61,14 @@ public class MyCoursesActivity extends ActionBarActivity implements AdapterView.
      */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        ((VijayamApplication) getApplication()).getAppState().setSelectedCourse(courseList.get(position));
-        Intent intent = new Intent(parent.getContext(), TopicsActivity.class);
-        startActivity(intent);
+        Course selectedCourse = courseList.get(position);
+        int count = new TopicDao(this).fetchTopicCount(selectedCourse.getId());
+        if(count > 0) {
+            ((VijayamApplication) getApplication()).getAppState().setSelectedCourse(selectedCourse);
+            Intent intent = new Intent(parent.getContext(), TopicsActivity.class);
+            startActivity(intent);
+        } else {
+            Toast.makeText(getApplicationContext(), "No topics available for this course", Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -4,11 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.avisit.vijayam.R;
 import com.avisit.vijayam.adapters.TopicListViewAdapter;
@@ -21,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TopicsActivity extends ActionBarActivity implements AdapterView.OnItemClickListener{
-    private static final String TAG = TopicsActivity.class.getSimpleName();
     private List<Topic> topicList = new ArrayList<Topic>();
     ListView listView;
 
@@ -57,12 +55,17 @@ public class TopicsActivity extends ActionBarActivity implements AdapterView.OnI
      */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        VijayamApplication application = (VijayamApplication) getApplication();
         Topic topic = topicList.get(position);
-        application.getAppState().setSelectedTopic(topic);
-        application.getAppState().setTotalQuestions(new QuestionDao(this).fetchTotalQuestionCount(topic.getId()));
-        application.getAppState().setCurrentQuestionIndex(new QuestionDao(this).fetchLastSessionQuesId(topic.getId()));
-        Intent intent = new Intent(this, QuestionsActivity.class);
-        this.startActivity(intent);
+        int count = new QuestionDao(this).fetchTotalQuestionCount(topic.getId());
+        if(count > 0) {
+            VijayamApplication application = (VijayamApplication) getApplication();
+            application.getAppState().setSelectedTopic(topic);
+            application.getAppState().setTotalQuestions(count);
+            application.getAppState().setCurrentQuestionIndex(new QuestionDao(this).fetchLastSessionQuesId(topic.getId()));
+            Intent intent = new Intent(this, QuestionsActivity.class);
+            this.startActivity(intent);
+        } else {
+            Toast.makeText(getApplicationContext(), "No questions available for this topic", Toast.LENGTH_SHORT).show();
+        }
     }
 }

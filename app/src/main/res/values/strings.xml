@@ -28,12 +28,13 @@
     <string name="title_activity_setup">SetupActivity</string>
     <string name="register">Register</string>
     <string name="later">Later</string>
-    <string name="setup_message">Personalize and enjoy the App with your Institute Study material by providing the below details. However, you can skip this step and view the generic content available in-built with the App</string>
-    <string name="institute_code">Institute Code</string>
+    <string name="setup_message">Avail content updates by the providing the following details. However, you can register later by skipping this step and view the generic content available in-built with the App</string>
+    <!--<string name="institute_code">Institute Code</string>-->
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="no_connection">Please turn on either mobile-data or wifi</string>
     <string name="no_connection_title">Network connection not available</string>
     <string name="settings_button_text">Settings</string>
     <string name="cancel_button_text">Cancel</string>
+    <string name="sync">Sync</string>
 </resources>

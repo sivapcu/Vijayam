@@ -18,8 +18,10 @@ import android.widget.Toast;
 import com.avisit.vijayam.R;
 import com.avisit.vijayam.dao.AppParamDao;
 import com.avisit.vijayam.dao.CourseDao;
+import com.avisit.vijayam.dao.QuestionDao;
 import com.avisit.vijayam.dao.TopicDao;
 import com.avisit.vijayam.model.Course;
+import com.avisit.vijayam.model.Question;
 import com.avisit.vijayam.model.Topic;
 import com.avisit.vijayam.service.HttpServiceHandler;
 import com.avisit.vijayam.util.AndroidUtils;
@@ -42,7 +44,7 @@ import java.util.regex.Pattern;
 public class SetupActivity extends ActionBarActivity {
     private EditText emailEditText;
     private EditText passEditText;
-    private EditText instituteEditText;
+    /*private EditText instituteEditText;*/
     private Context context;
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -61,7 +63,7 @@ public class SetupActivity extends ActionBarActivity {
         setContentView(R.layout.activity_setup);
         customizeActionBar();
         this.context = getApplicationContext();
-        instituteEditText = (EditText) findViewById(R.id.instituteCode);
+        /*instituteEditText = (EditText) findViewById(R.id.instituteCode);*/
         emailEditText = (EditText) findViewById(R.id.email);
         passEditText = (EditText) findViewById(R.id.password);
 
@@ -109,11 +111,11 @@ public class SetupActivity extends ActionBarActivity {
     public void register(View view) {
         boolean validationFlag = true;
 
-        final String instituteCode = instituteEditText.getText().toString();
+        /*final String instituteCode = instituteEditText.getText().toString();
         if (!isValid(instituteCode, 6)) {
             instituteEditText.setError("Invalid Institute Code");
             validationFlag = false;
-        }
+        }*/
 
         final String email = emailEditText.getText().toString();
         if (!isValidEmail(email)) {
@@ -177,7 +179,9 @@ public class SetupActivity extends ActionBarActivity {
             private void sendRegistrationIdToServer() throws Exception {
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("registrationId", registrationId));
-                params.add(new BasicNameValuePair("contentProviderId", instituteEditText.getText().toString()));
+                String contentProviderId = new AppParamDao(SetupActivity.this).getAppParamValue("contentProviderId");
+                /*params.add(new BasicNameValuePair("contentProviderId", instituteEditText.getText().toString()));*/
+                params.add(new BasicNameValuePair("contentProviderId", contentProviderId));
                 params.add(new BasicNameValuePair("email", emailEditText.getText().toString()));
                 params.add(new BasicNameValuePair("password", passEditText.getText().toString()));
 
@@ -199,8 +203,20 @@ public class SetupActivity extends ActionBarActivity {
                     publishProgress("Persisting data to the local database");
                     for(Course course : courseList){
                         if(new CourseDao(context).insertIfUpdateFails(course)){
+//                            List<NameValuePair> topicParam = new ArrayList<NameValuePair>();
                             for(Topic topic : course.getTopicList()){
-                                new TopicDao(context).insertIfUpdateFails(topic);
+                                if(new TopicDao(context).insertIfUpdateFails(topic)){
+                                    /*topicParam.clear();
+                                    topicParam.add(new BasicNameValuePair("topicId", Integer.toString(topic.getId())));
+                                    //String response3 = httpServiceHandler.makeServiceCall(Constants.QUES_BY_TOPIC, HttpServiceHandler.POST, topicParam);
+                                    List<Question> questionList = new ObjectMapper().readValue(response3, new TypeReference<ArrayList<Question>>() {});
+                                    for(Question question : questionList) {
+                                        new QuestionDao(context).insertIfUpdateFails(question, topic.getId());
+                                    }*/
+                                    for(Question question : topic.getQuestions()){
+                                        new QuestionDao(context).insertIfUpdateFails(question, topic.getId());
+                                    }
+                                }
                             }
                         }
                     }
@@ -253,7 +269,7 @@ public class SetupActivity extends ActionBarActivity {
 
     private void storeRegistrationId() {
         new AppParamDao(context).update(Constants.DEVICE_REG_ID, registrationId);
-        new AppParamDao(context).update(Constants.CONTENT_PROVIDER_ID, instituteEditText.getText().toString());
+        /*new AppParamDao(context).update(Constants.CONTENT_PROVIDER_ID, instituteEditText.getText().toString());*/
         new AppParamDao(context).update(Constants.USER_EMAIL, emailEditText.getText().toString());
         new AppParamDao(context).update(Constants.USER_PASSWORD, passEditText.getText().toString());
         new AppParamDao(context).update(Constants.REGISTERED_VERSION, Integer.toString(AndroidUtils.getAppVersionCode(context)));
